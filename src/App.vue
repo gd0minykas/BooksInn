@@ -1,7 +1,8 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import NavBar from "./components/NavBar.vue";
+</script>
 
 <template>
-  <div class="container">
-    <h1 class="mt-5">Books Inn</h1>
-  </div>
+  <NavBar />
+  <RouterView />
 </template>
