@@ -4,16 +4,16 @@ import GoogleLogo from "@/components/logos/GoogleLogo.vue";
 import ErrorMessage from "@/components/ErrorMessage.vue";
 import { auth } from "@/firebase";
 import { FirebaseError } from "firebase/app";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { watch, ref, type Ref } from "vue";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+} from "firebase/auth";
+import { ref, type Ref } from "vue";
+import router from "@/router/index";
 
 const email: Ref<string> = ref("");
 const password: Ref<string> = ref("");
 const repeatPassword: Ref<string> = ref("");
-
-watch(email, () => {
-  console.log(email.value);
-});
 
 const emailError: Ref<string | undefined> = ref();
 const passwordError: Ref<string | undefined> = ref();
@@ -21,18 +21,12 @@ const repeatPasswordError: Ref<string | undefined> = ref();
 
 async function createUser() {
   try {
-    const userCredentials = await createUserWithEmailAndPassword(
-      auth,
-      email.value,
-      password.value
-    );
-    console.log(userCredentials);
+    await createUserWithEmailAndPassword(auth, email.value, password.value);
   } catch (error) {
     if (error instanceof FirebaseError) {
       // TODO ERROR HANDLING
       console.log(error.code);
     }
-  } finally {
   }
 }
 </script>
@@ -45,7 +39,7 @@ async function createUser() {
         <h2>Register as a new user</h2>
       </div>
       <div class="col">
-        <form v-on:submit.prevent="createUser()">
+        <form>
           <div class="mb-3">
             <label for="email" class="form-label ms-1">Email:</label>
             <input
