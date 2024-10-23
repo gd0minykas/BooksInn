@@ -3,20 +3,22 @@ import FacebookLogo from "@/components/logos/FacebookLogo.vue";
 import GoogleLogo from "@/components/logos/GoogleLogo.vue";
 import ErrorMessage from "@/components/ErrorMessage.vue";
 import router from "@/router/index";
+import NavBar from "@/components/NavBar.vue";
 import { auth } from "@/firebase";
 import { FirebaseError } from "firebase/app";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { ref, type Ref } from "vue";
 
-const email: Ref<string> = ref("");
-const password: Ref<string> = ref("");
+const email = ref<string>("");
+const password = ref<string>("");
 
-const emailError: Ref<string | undefined> = ref();
-const passwordError: Ref<string | undefined> = ref();
+const emailError = ref<string | undefined>();
+const passwordError = ref<string | undefined>();
 
 async function signIn() {
   try {
     await signInWithEmailAndPassword(auth, email.value, password.value);
+    localStorage.setItem("userIsLogedIn", "true");
   } catch (error) {
     if (error instanceof FirebaseError) {
       // TODO ERROR HANDLING
@@ -27,6 +29,7 @@ async function signIn() {
 </script>
 
 <template>
+  <NavBar />
   <div class="container">
     <div class="row">
       <div class="col align-self-start">
