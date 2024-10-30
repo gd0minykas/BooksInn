@@ -8,7 +8,9 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     router.push("/");
   } else {
-    router.push("/login");
+    if (router.currentRoute.value.path !== "/register") {
+      router.push("/login");
+    }
   }
 });
 </script>

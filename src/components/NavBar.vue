@@ -5,7 +5,6 @@ import { signOut } from "firebase/auth";
 import { onMounted, ref } from "vue";
 
 const userState = ref<string | null>(localStorage.getItem("userIsLogedIn"));
-console.log(userState);
 
 async function signOutUser() {
   try {
