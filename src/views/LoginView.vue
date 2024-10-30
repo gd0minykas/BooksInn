@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import FacebookLogo from "@/components/logos/FacebookLogo.vue";
 import GoogleLogo from "@/components/logos/GoogleLogo.vue";
 import ErrorMessage from "@/components/ErrorMessage.vue";
 import router from "@/router/index";
@@ -62,7 +61,6 @@ async function signIn() {
           >
             Register
           </button>
-          <a href="#"><FacebookLogo class="mx-3" /></a>
           <a href="#"><GoogleLogo class="me-3" /></a>
         </div>
       </div>

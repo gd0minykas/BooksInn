@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import FacebookLogo from "@/components/logos/FacebookLogo.vue";
 import GoogleLogo from "@/components/logos/GoogleLogo.vue";
 import ErrorMessage from "@/components/ErrorMessage.vue";
 import NavBar from "@/components/NavBar.vue";
@@ -79,7 +78,6 @@ async function createUser() {
           >
             Register
           </button>
-          <a href="#"><FacebookLogo class="mx-3" /></a>
           <a href="#"><GoogleLogo class="me-3" /></a>
         </div>
         <div class="d-flex flex-row-reverse justify-content-between">
