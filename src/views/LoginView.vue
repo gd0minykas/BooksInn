@@ -3,21 +3,46 @@ import GoogleLogo from "@/components/logos/GoogleLogo.vue";
 import ErrorMessage from "@/components/ErrorMessage.vue";
 import router from "@/router/index";
 import NavBar from "@/components/NavBar.vue";
-import { auth } from "@/firebase";
+import { auth, provider } from "@/firebase";
 import { generateFirebaseAuthErrorMessage } from "@/errorHandler";
 import { FirebaseError } from "firebase/app";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getRedirectResult,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
 import { ref, watch, type Ref } from "vue";
 
 const email = ref<string>("");
 const password = ref<string>("");
 const errorMessage = ref<string | undefined>();
+const loading = ref<boolean>(false);
 
 async function signIn() {
   try {
+    loading.value = true;
     await signInWithEmailAndPassword(auth, email.value, password.value);
     localStorage.setItem("userIsLogedIn", "true");
+    loading.value = false;
   } catch (error) {
+    loading.value = false;
+    if (error instanceof FirebaseError) {
+      errorMessage.value = generateFirebaseAuthErrorMessage(error.code);
+    }
+  }
+}
+
+async function loginGoogleUser() {
+  try {
+    loading.value = true;
+    await signInWithPopup(auth, provider);
+    const result = await getRedirectResult(auth);
+    if (result) {
+      console.log(result);
+      loading.value = false;
+    }
+  } catch (error) {
+    loading.value = false;
     if (error instanceof FirebaseError) {
       errorMessage.value = generateFirebaseAuthErrorMessage(error.code);
     }
@@ -50,18 +75,34 @@ async function signIn() {
         <div class="min-h-2" style="min-height: 3em">
           <ErrorMessage :msg="errorMessage" v-if="errorMessage" />
         </div>
-        <div class="mb-3 d-flex flex-row-reverse">
-          <button type="submit" class="ms-2 btn btn-warning" @click="signIn()">
-            Log In
-          </button>
-          <button
-            type="button"
-            class="ms-5 btn btn-warning"
-            @click="router.push('/register')"
-          >
-            Register
-          </button>
-          <a href="#"><GoogleLogo class="me-3" /></a>
+        <div v-if="!loading">
+          <div class="mb-3 d-flex flex-row-reverse">
+            <button type="button" class="btn btn-warning" @click="signIn()">
+              Log In
+            </button>
+            <a href="#" @click="loginGoogleUser()"
+              ><GoogleLogo class="me-5"
+            /></a>
+          </div>
+          <div class="d-flex flex-row-reverse justify-content-between">
+            <div class="align-self-center">
+              <button
+                type="button"
+                class="ms-5 btn btn-warning"
+                @click="router.push('/register')"
+              >
+                Register
+              </button>
+            </div>
+            <p class="mt-2 lead">
+              *Register if you do not have an account already!
+            </p>
+          </div>
+        </div>
+        <div v-if="loading" class="mt-5 d-flex justify-content-center">
+          <div class="spinner-grow" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
         </div>
       </div>
     </div>

@@ -18,5 +18,8 @@ export function generateFirebaseAuthErrorMessage(code: string) {
 
     case "repeatPassword does not match":
       return "Password and Repeat Password do not match";
+
+    case "auth/popup-closed-by-user":
+      return "Sign In Pop Up was closed";
   }
 }
