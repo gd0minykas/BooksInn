@@ -2,7 +2,14 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  type User,
+} from "firebase/auth";
+import { ref } from "vue";
+import router from "./router";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -23,9 +30,22 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const user = ref<User | null>(auth.currentUser);
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log(user);
+    localStorage.setItem("userIsLogedIn", "true");
+    router.push("/");
+  } else {
+    if (router.currentRoute.value.path !== "/register") {
+      router.push("/login");
+    }
+  }
+});
 
 const provider: GoogleAuthProvider = new GoogleAuthProvider();
 provider.addScope("email");
 auth.useDeviceLanguage();
 
-export { analytics, auth, db, provider };
+export { analytics, auth, db, provider, user };

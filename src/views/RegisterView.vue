@@ -7,8 +7,6 @@ import { auth, provider } from "@/firebase";
 import { FirebaseError } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithRedirect,
   getRedirectResult,
   signInWithPopup,
 } from "firebase/auth";

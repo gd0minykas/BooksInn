@@ -1,20 +1,35 @@
 <script setup lang="ts">
 import { sendPasswordResetEmail } from "firebase/auth";
+import ErrorMessage from "@/components/ErrorMessage.vue";
 import { auth, provider } from "@/firebase";
 import { ref } from 'vue';
+import type { RefSymbol } from "@vue/reactivity";
+import { toast } from "vue3-toastify";
+import { FirebaseError } from "firebase/app";
+import { generateFirebaseAuthErrorMessage } from "@/errorHandler";
 
 const emailForgotPassword = ref<string>("");
+const errorMessage = ref<string | undefined>();
+
+// vue3-toastify
+const notify = () => {
+  toast('Password reset link was sent successfully!', {
+    autoClose:3000,
+    theme:'colored',
+    type: 'success',
+    position: 'bottom-right'
+  })
+}
 
 async function sendForgotPassword() {
   try {
     await sendPasswordResetEmail(auth, emailForgotPassword.value);
+    notify();
   } catch (error) {
-    console.log(error);
+    if(error instanceof FirebaseError) {
+      errorMessage.value = generateFirebaseAuthErrorMessage(error.code);
+    }
   }
-  // Open modal
-  // Enter email
-  // send password email
-  // Validation?
 }
 </script>
 <template>
@@ -47,9 +62,12 @@ async function sendForgotPassword() {
           </p>
           <hr></hr>
           <div class="mb-3">
-          <label for="emailPassword" class="form-label ms-1">Email:</label>
-          <input type="email" v-model="emailForgotPassword" id="emailPassword" class="form-control" />
-        </div>
+            <label for="emailPassword" class="form-label ms-1">Email:</label>
+            <input type="email" v-model="emailForgotPassword" id="emailPassword" class="form-control" />
+          </div>
+          <div class="min-h-2" style="min-height: 2em">
+            <ErrorMessage :msg="errorMessage" v-if="errorMessage" />
+          </div>
         </div>
         <div class="modal-footer">
           <button
@@ -59,7 +77,7 @@ async function sendForgotPassword() {
           >
             Close
           </button>
-          <button type="button" class="btn btn-warning" @click="sendForgotPassword()">Send</button>
+          <button type="button" class="btn btn-warning" @click="sendForgotPassword()" data-bs-dismiss="modal">Send</button>
         </div>
       </div>
     </div>
