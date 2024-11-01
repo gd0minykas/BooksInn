@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import GoogleLogo from "@/components/logos/GoogleLogo.vue";
 import ErrorMessage from "@/components/ErrorMessage.vue";
+import Spinner1 from "@/components/Spinner1.vue";
 import NavBar from "@/components/NavBar.vue";
 import { auth, provider } from "@/firebase";
 import { FirebaseError } from "firebase/app";
@@ -26,7 +27,6 @@ async function createUser() {
     if (password.value == repeatPassword.value) {
       loading.value = true;
       await createUserWithEmailAndPassword(auth, email.value, password.value);
-      localStorage.setItem("userIsLogedIn", "true");
       loading.value = false;
     } else {
       errorMessage.value = generateFirebaseAuthErrorMessage(
@@ -119,11 +119,7 @@ async function createGoogleUser() {
             </p>
           </div>
         </div>
-        <div v-if="loading" class="mt-5 d-flex justify-content-center">
-          <div class="spinner-grow" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>
+        <Spinner1 v-if="loading" />
       </div>
     </div>
   </div>

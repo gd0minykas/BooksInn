@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import GoogleLogo from "@/components/logos/GoogleLogo.vue";
 import ErrorMessage from "@/components/ErrorMessage.vue";
+import ForgotPModal from "@/components/ForgotPasswordModal.vue";
+import Spinner1 from "@/components/Spinner1.vue";
 import router from "@/router/index";
 import NavBar from "@/components/NavBar.vue";
 import { auth, provider } from "@/firebase";
@@ -22,7 +24,6 @@ async function signIn() {
   try {
     loading.value = true;
     await signInWithEmailAndPassword(auth, email.value, password.value);
-    localStorage.setItem("userIsLogedIn", "true");
     loading.value = false;
   } catch (error) {
     loading.value = false;
@@ -69,8 +70,17 @@ async function loginGoogleUser() {
             type="password"
             v-model="password"
             id="password"
-            class="form-control"
+            class="form-control mb-3"
           />
+          <a
+            href="#"
+            class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+            data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop"
+          >
+            <span>Forgot password</span></a
+          >
+          <ForgotPModal />
         </div>
         <div class="min-h-2" style="min-height: 3em">
           <ErrorMessage :msg="errorMessage" v-if="errorMessage" />
@@ -99,11 +109,7 @@ async function loginGoogleUser() {
             </p>
           </div>
         </div>
-        <div v-if="loading" class="mt-5 d-flex justify-content-center">
-          <div class="spinner-grow" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>
+        <Spinner1 v-if="loading" />
       </div>
     </div>
   </div>
