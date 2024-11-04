@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import GoogleLogo from "@/components/logos/GoogleLogo.vue";
-import ErrorMessage from "@/components/ErrorMessage.vue";
+import ErrorMessage from "@/components/inputs/ErrorMessage.vue";
 import ForgotPModal from "@/components/ForgotPasswordModal.vue";
+import ShowPassButton from "@/components/inputs/icons/ShowPassButton.vue";
+import HidePassButton from "@/components/inputs/icons/HidePassButton.vue";
 import Spinner1 from "@/components/Spinner1.vue";
 import router from "@/router/index";
 import NavBar from "@/components/NavBar.vue";
@@ -13,12 +15,13 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
-import { ref, watch, type Ref } from "vue";
+import { ref, watch } from "vue";
 
 const email = ref<string>("");
 const password = ref<string>("");
 const errorMessage = ref<string | undefined>();
 const loading = ref<boolean>(false);
+const hidePassword = ref<boolean>(true);
 
 async function signIn() {
   try {
@@ -49,6 +52,8 @@ async function loginGoogleUser() {
     }
   }
 }
+
+watch(hidePassword, () => console.log(hidePassword.value));
 </script>
 
 <template>
@@ -66,12 +71,31 @@ async function loginGoogleUser() {
         </div>
         <div class="mb-3">
           <label for="password" class="form-label ms-1">Password:</label>
-          <input
+          <div v-if="hidePassword" class="input-group">
+            <input
+              class="form-control"
+              type="password"
+              v-model="password"
+              id="password"
+            />
+            <HidePassButton @click="hidePassword = !hidePassword" />
+          </div>
+          <div v-else class="input-group">
+            <input
+              class="form-control"
+              type="text"
+              v-model="password"
+              id="password"
+            />
+            <ShowPassButton @click="hidePassword = !hidePassword" />
+          </div>
+
+          <!-- <input
             type="password"
             v-model="password"
             id="password"
             class="form-control mb-3"
-          />
+          /> -->
           <a
             href="#"
             class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import GoogleLogo from "@/components/logos/GoogleLogo.vue";
-import ErrorMessage from "@/components/ErrorMessage.vue";
+import ErrorMessage from "@/components//inputs/ErrorMessage.vue";
+import ShowPassButton from "@/components/inputs/icons/ShowPassButton.vue";
+import HidePassButton from "@/components/inputs/icons/HidePassButton.vue";
 import Spinner1 from "@/components/Spinner1.vue";
 import NavBar from "@/components/NavBar.vue";
 import { auth, provider } from "@/firebase";
@@ -19,6 +21,7 @@ const password = ref<string>("");
 const repeatPassword = ref<string>("");
 const errorMessage = ref<string | undefined>();
 const loading = ref<boolean>(false);
+const hidePassword = ref<boolean>(true);
 
 async function createUser() {
   try {
@@ -72,23 +75,47 @@ async function createGoogleUser() {
         </div>
         <div class="mb-3">
           <label for="password" class="form-label ms-1">Password:</label>
-          <input
-            type="password"
-            v-model="password"
-            id="password"
-            class="form-control"
-          />
+          <div v-if="hidePassword" class="input-group">
+            <input
+              class="form-control"
+              type="password"
+              v-model="password"
+              id="password"
+            />
+            <HidePassButton @click="hidePassword = !hidePassword" />
+          </div>
+          <div v-else class="input-group">
+            <input
+              class="form-control"
+              type="text"
+              v-model="password"
+              id="password"
+            />
+            <ShowPassButton @click="hidePassword = !hidePassword" />
+          </div>
         </div>
         <div class="mb-3">
           <label for="rePassword" class="form-label ms-1"
             >Repeat Password:</label
           >
-          <input
-            type="password"
-            v-model="repeatPassword"
-            id="rePassword"
-            class="form-control"
-          />
+          <div v-if="hidePassword" class="input-group">
+            <input
+              class="form-control"
+              type="password"
+              v-model="repeatPassword"
+              id="rePassword"
+            />
+            <HidePassButton @click="hidePassword = !hidePassword" />
+          </div>
+          <div v-else class="input-group">
+            <input
+              class="form-control"
+              type="text"
+              v-model="repeatPassword"
+              id="rePassword"
+            />
+            <ShowPassButton @click="hidePassword = !hidePassword" />
+          </div>
         </div>
         <div v-if="!loading">
           <div class="min-h-2" style="min-height: 3em">
