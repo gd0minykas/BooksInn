@@ -52,8 +52,6 @@ async function loginGoogleUser() {
     }
   }
 }
-
-watch(hidePassword, () => console.log(hidePassword.value));
 </script>
 
 <template>
@@ -71,7 +69,7 @@ watch(hidePassword, () => console.log(hidePassword.value));
         </div>
         <div class="mb-3">
           <label for="password" class="form-label ms-1">Password:</label>
-          <div v-if="hidePassword" class="input-group">
+          <div v-if="hidePassword" class="input-group mb-3">
             <input
               class="form-control"
               type="password"
@@ -80,7 +78,7 @@ watch(hidePassword, () => console.log(hidePassword.value));
             />
             <HidePassButton @click="hidePassword = !hidePassword" />
           </div>
-          <div v-else class="input-group">
+          <div v-else class="input-group mb-3">
             <input
               class="form-control"
               type="text"
@@ -89,13 +87,6 @@ watch(hidePassword, () => console.log(hidePassword.value));
             />
             <ShowPassButton @click="hidePassword = !hidePassword" />
           </div>
-
-          <!-- <input
-            type="password"
-            v-model="password"
-            id="password"
-            class="form-control mb-3"
-          /> -->
           <a
             href="#"
             class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"

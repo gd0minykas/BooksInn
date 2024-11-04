@@ -34,7 +34,6 @@ const user = ref<User | null>(auth.currentUser);
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    console.log(user);
     localStorage.setItem("userIsLogedIn", "true");
     router.push("/");
   } else {
