@@ -7,15 +7,11 @@ import HidePassButton from "@/components/inputs/icons/HidePassButton.vue";
 import Spinner1 from "@/components/Spinner1.vue";
 import router from "@/router/index";
 import NavBar from "@/components/NavBar.vue";
-import { auth, provider } from "@/firebase";
+import { auth, signInGoogleUser } from "@/firebase";
 import { generateFirebaseAuthErrorMessage } from "@/errorHandler";
 import { FirebaseError } from "firebase/app";
-import {
-  getRedirectResult,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-} from "firebase/auth";
-import { ref, watch } from "vue";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { ref } from "vue";
 
 const email = ref<string>("");
 const password = ref<string>("");
@@ -39,12 +35,8 @@ async function signIn() {
 async function loginGoogleUser() {
   try {
     loading.value = true;
-    await signInWithPopup(auth, provider);
-    const result = await getRedirectResult(auth);
-    if (result) {
-      console.log(result);
-      loading.value = false;
-    }
+    await signInGoogleUser();
+    loading.value = false;
   } catch (error) {
     loading.value = false;
     if (error instanceof FirebaseError) {

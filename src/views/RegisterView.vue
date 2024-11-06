@@ -5,13 +5,8 @@ import ShowPassButton from "@/components/inputs/icons/ShowPassButton.vue";
 import HidePassButton from "@/components/inputs/icons/HidePassButton.vue";
 import Spinner1 from "@/components/Spinner1.vue";
 import NavBar from "@/components/NavBar.vue";
-import { auth, provider } from "@/firebase";
+import { createUserWithEmail, signInGoogleUser } from "@/firebase";
 import { FirebaseError } from "firebase/app";
-import {
-  createUserWithEmailAndPassword,
-  getRedirectResult,
-  signInWithPopup,
-} from "firebase/auth";
 import router from "@/router/index";
 import { ref } from "vue";
 import { generateFirebaseAuthErrorMessage } from "@/errorHandler";
@@ -27,7 +22,7 @@ async function createUser() {
   try {
     if (password.value == repeatPassword.value) {
       loading.value = true;
-      await createUserWithEmailAndPassword(auth, email.value, password.value);
+      await createUserWithEmail(email.value, password.value);
       loading.value = false;
     } else {
       errorMessage.value = generateFirebaseAuthErrorMessage(
@@ -45,12 +40,8 @@ async function createUser() {
 async function createGoogleUser() {
   try {
     loading.value = true;
-    await signInWithPopup(auth, provider);
-    const result = await getRedirectResult(auth);
-    if (result) {
-      console.log(result);
-      loading.value = false;
-    }
+    await signInGoogleUser();
+    loading.value = false;
   } catch (error) {
     loading.value = false;
     if (error instanceof FirebaseError) {

@@ -1,5 +1,5 @@
 export function generateFirebaseAuthErrorMessage(code: string) {
-  console.log("Provided code: " + code);
+  // console.log("Provided code: " + code);
   switch (code) {
     case "auth/invalid-credential":
       return "Provided User Credentials are invalid";
@@ -21,5 +21,11 @@ export function generateFirebaseAuthErrorMessage(code: string) {
 
     case "auth/popup-closed-by-user":
       return "Sign In Pop Up was closed";
+
+    case "auth/email-already-in-use":
+      return "This Email is already in use";
+
+    default:
+      return "Unhandled Error";
   }
 }

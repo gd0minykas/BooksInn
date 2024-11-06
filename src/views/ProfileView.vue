@@ -10,7 +10,7 @@ const loading = ref<boolean>(false);
 
 onMounted(async () => {
   loading.value = true;
-  await Promise.all([auth.authStateReady()]);
+  await auth.authStateReady();
   user.value = auth.currentUser;
   loading.value = false;
 });
@@ -24,7 +24,7 @@ onMounted(async () => {
     </div>
     <div v-else>
       <h1>BooksInn Profile</h1>
-      <h2 v-if="user">Hello, {{ user?.email }}</h2>
+      <h2 v-if="user">Hello, {{ user?.displayName }}</h2>
     </div>
   </div>
 </template>

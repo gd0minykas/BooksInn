@@ -1,12 +1,16 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore } from "firebase/firestore";
+import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import {
+  createUserWithEmailAndPassword,
   getAuth,
+  getRedirectResult,
   GoogleAuthProvider,
   onAuthStateChanged,
+  signInWithPopup,
   type User,
+  type UserCredential,
 } from "firebase/auth";
 import { ref } from "vue";
 import router from "./router";
@@ -31,6 +35,8 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const user = ref<User | null>(auth.currentUser);
+const createdUser = ref<UserCredential | null>();
+const createdUserWithProviders = ref<UserCredential | null>();
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -42,6 +48,40 @@ onAuthStateChanged(auth, (user) => {
     }
   }
 });
+
+export async function createUserWithEmail(email: string, password: string) {
+  createdUser.value = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
+  await setDoc(doc(db, "users", createdUser.value.user.uid), {
+    Name: auth.currentUser?.displayName,
+    Bio: null,
+    LevelExp: 1,
+    isNew: true,
+    created: createdUser.value.user.metadata.creationTime,
+    updated: null,
+  });
+}
+
+export async function signInGoogleUser() {
+  createdUserWithProviders.value = await signInWithPopup(auth, provider);
+  const userDoc = await getDoc(
+    doc(db, "users", createdUserWithProviders.value.user.uid)
+  );
+  console.log(userDoc.exists());
+  if (createdUserWithProviders.value && !userDoc.exists()) {
+    await setDoc(doc(db, "users", createdUserWithProviders.value.user.uid), {
+      Name: auth.currentUser?.displayName,
+      Bio: null,
+      LevelExp: 1,
+      isNew: true,
+      created: createdUserWithProviders.value.user.metadata.creationTime,
+      updated: null,
+    });
+  }
+}
 
 const provider: GoogleAuthProvider = new GoogleAuthProvider();
 provider.addScope("email");
