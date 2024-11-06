@@ -7,6 +7,7 @@ import HidePassButton from "@/components/inputs/icons/HidePassButton.vue";
 import Spinner1 from "@/components/Spinner1.vue";
 import router from "@/router/index";
 import NavBar from "@/components/NavBar.vue";
+import FooterBar from "@/components/Footer.vue";
 import { auth, signInGoogleUser } from "@/firebase";
 import { generateFirebaseAuthErrorMessage } from "@/errorHandler";
 import { FirebaseError } from "firebase/app";
@@ -101,23 +102,10 @@ async function loginGoogleUser() {
               ><GoogleLogo class="me-5"
             /></a>
           </div>
-          <div class="d-flex flex-row-reverse justify-content-between">
-            <div class="align-self-center">
-              <button
-                type="button"
-                class="ms-5 btn btn-warning"
-                @click="router.push('/register')"
-              >
-                Register
-              </button>
-            </div>
-            <p class="mt-2 lead">
-              *Register if you do not have an account already!
-            </p>
-          </div>
         </div>
         <Spinner1 v-if="loading" />
       </div>
     </div>
   </div>
+  <FooterBar />
 </template>

@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { sendPasswordResetEmail } from "firebase/auth";
 import ErrorMessage from "@/components/inputs/ErrorMessage.vue";
-import { auth, provider } from "@/firebase";
+import { auth } from "@/firebase";
 import { ref } from 'vue';
-import type { RefSymbol } from "@vue/reactivity";
 import { toast } from "vue3-toastify";
 import { FirebaseError } from "firebase/app";
 import { generateFirebaseAuthErrorMessage } from "@/errorHandler";

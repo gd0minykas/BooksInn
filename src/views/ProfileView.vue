@@ -1,6 +1,7 @@
 <script async setup lang="ts">
 import { onMounted, ref } from "vue";
 import NavBar from "@/components/NavBar.vue";
+import FooterBar from "@/components/Footer.vue";
 import { auth } from "@/firebase";
 import { type User } from "firebase/auth";
 import Spinner1 from "@/components/Spinner1.vue";
@@ -27,4 +28,5 @@ onMounted(async () => {
       <h2 v-if="user">Hello, {{ user?.displayName }}</h2>
     </div>
   </div>
+  <FooterBar />
 </template>

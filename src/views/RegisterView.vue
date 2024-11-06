@@ -5,6 +5,7 @@ import ShowPassButton from "@/components/inputs/icons/ShowPassButton.vue";
 import HidePassButton from "@/components/inputs/icons/HidePassButton.vue";
 import Spinner1 from "@/components/Spinner1.vue";
 import NavBar from "@/components/NavBar.vue";
+import FooterBar from "@/components/Footer.vue";
 import { createUserWithEmail, signInGoogleUser } from "@/firebase";
 import { FirebaseError } from "firebase/app";
 import router from "@/router/index";
@@ -139,4 +140,5 @@ async function createGoogleUser() {
       </div>
     </div>
   </div>
+  <FooterBar />
 </template>

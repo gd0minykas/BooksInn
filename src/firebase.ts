@@ -70,7 +70,6 @@ export async function signInGoogleUser() {
   const userDoc = await getDoc(
     doc(db, "users", createdUserWithProviders.value.user.uid)
   );
-  console.log(userDoc.exists());
   if (createdUserWithProviders.value && !userDoc.exists()) {
     await setDoc(doc(db, "users", createdUserWithProviders.value.user.uid), {
       Name: auth.currentUser?.displayName,
