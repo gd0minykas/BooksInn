@@ -64,7 +64,18 @@ onMounted(async () => {
                 <span class="fs-8">Level: {{ 1 }}</span>
               </div>
               <div>
-                <!-- level bar -->
+                <div class="progress border border-dark mt-1">
+                  <div
+                    class="progress-bar bg-warning text-dark"
+                    role="progressbar"
+                    style="width: 50%"
+                    aria-valuenow="50"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  >
+                    50%
+                  </div>
+                </div>
               </div>
             </div>
           </div>
