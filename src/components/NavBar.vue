@@ -22,17 +22,20 @@ async function signOutUser() {
 </script>
 
 <template>
-  <nav class="navbar navbar-expand-lg mb-5 mx-5">
+  <nav id="nav" class="navbar navbar-expand-lg mb-5 mx-5 rounded-5">
     <div class="container-fluid d-flex justify-content-evenly">
-      <a class="navbar-brand" href="/">
-        <BooksInnLogo />
-        <span class="ms-2 fs-4">Books' Inn</span></a
-      >
-      <button v-if="userState" class="btn btn-warning" @click="signOutUser()">
-        Sign Out
-      </button>
+      <div>
+        <a class="navbar-brand" href="/">
+          <BooksInnLogo />
+          <span class="ms-2 fs-4">Books' Inn</span></a
+        >
+      </div>
+      <div v-if="userState">
+        <button class="btn btn-warning me-2">Edit Profile</button>
+        <button class="btn btn-warning me-2" @click="signOutUser()">
+          Sign Out
+        </button>
+      </div>
     </div>
   </nav>
 </template>
-
-<style></style>

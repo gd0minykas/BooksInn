@@ -5,7 +5,6 @@ import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import {
   createUserWithEmailAndPassword,
   getAuth,
-  getRedirectResult,
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithPopup,
@@ -49,20 +48,33 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
+// Creation of the user on firestore
+async function createUserOnDb(
+  userId: string,
+  name: string | null | undefined,
+  creationTime: string | undefined
+) {
+  await setDoc(doc(db, "users", userId), {
+    Name: name,
+    Exp: 1,
+    isNew: true,
+    created: creationTime,
+    updated: null,
+  });
+}
+
+// Sign Ins
 export async function createUserWithEmail(email: string, password: string) {
   createdUser.value = await createUserWithEmailAndPassword(
     auth,
     email,
     password
   );
-  await setDoc(doc(db, "users", createdUser.value.user.uid), {
-    Name: auth.currentUser?.displayName,
-    Bio: null,
-    LevelExp: 1,
-    isNew: true,
-    created: createdUser.value.user.metadata.creationTime,
-    updated: null,
-  });
+  await createUserOnDb(
+    createdUser.value.user.uid,
+    auth.currentUser?.displayName,
+    createdUser.value.user.metadata.creationTime
+  );
 }
 
 export async function signInGoogleUser() {
@@ -71,14 +83,11 @@ export async function signInGoogleUser() {
     doc(db, "users", createdUserWithProviders.value.user.uid)
   );
   if (createdUserWithProviders.value && !userDoc.exists()) {
-    await setDoc(doc(db, "users", createdUserWithProviders.value.user.uid), {
-      Name: auth.currentUser?.displayName,
-      Bio: null,
-      LevelExp: 1,
-      isNew: true,
-      created: createdUserWithProviders.value.user.metadata.creationTime,
-      updated: null,
-    });
+    await createUserOnDb(
+      createdUserWithProviders.value.user.uid,
+      auth.currentUser?.displayName,
+      createdUserWithProviders.value.user.metadata.creationTime
+    );
   }
 }
 
