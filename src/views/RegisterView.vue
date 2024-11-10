@@ -19,6 +19,8 @@ const errorMessage = ref<string | undefined>();
 const loading = ref<boolean>(false);
 const hidePassword = ref<boolean>(true);
 
+// Implement floating label to form-control
+
 async function createUser() {
   try {
     if (password.value == repeatPassword.value) {
@@ -61,51 +63,69 @@ async function createGoogleUser() {
         <h2>Register as a new user</h2>
       </div>
       <div class="col">
-        <div class="mb-3">
-          <label for="email" class="form-label ms-1">Email:</label>
-          <input type="email" v-model="email" id="email" class="form-control" />
+        <div class="form-floating mb-3">
+          <input
+            type="email"
+            v-model="email"
+            id="email"
+            class="form-control"
+            placeholder="Email"
+          />
+          <label for="email">Email</label>
         </div>
         <div class="mb-3">
-          <label for="password" class="form-label ms-1">Password:</label>
           <div v-if="hidePassword" class="input-group">
-            <input
-              class="form-control"
-              type="password"
-              v-model="password"
-              id="password"
-            />
+            <div class="form-floating">
+              <input
+                class="form-control"
+                type="password"
+                v-model="password"
+                id="password"
+                placeholder="Password"
+              />
+              <label for="password" class="form-label ms-1">Password</label>
+            </div>
             <HidePassButton @click="hidePassword = !hidePassword" />
           </div>
           <div v-else class="input-group">
-            <input
-              class="form-control"
-              type="text"
-              v-model="password"
-              id="password"
-            />
+            <div class="form-floating">
+              <input
+                class="form-control"
+                type="password"
+                v-model="password"
+                id="password"
+                placeholder="Password"
+              />
+              <label for="password" class="form-label ms-1">Password</label>
+            </div>
             <ShowPassButton @click="hidePassword = !hidePassword" />
           </div>
         </div>
         <div class="mb-3">
-          <label for="rePassword" class="form-label ms-1"
-            >Repeat Password:</label
-          >
           <div v-if="hidePassword" class="input-group">
-            <input
-              class="form-control"
-              type="password"
-              v-model="repeatPassword"
-              id="rePassword"
-            />
+            <div class="form-floating">
+              <input
+                class="form-control"
+                type="password"
+                v-model="repeatPassword"
+                id="rePassword"
+                placeholder="Repeat Password"
+              />
+              <label for="rePassword">Repeat Password</label>
+            </div>
             <HidePassButton @click="hidePassword = !hidePassword" />
           </div>
           <div v-else class="input-group">
-            <input
-              class="form-control"
-              type="text"
-              v-model="repeatPassword"
-              id="rePassword"
-            />
+            <div class="form-floating">
+              <input
+                class="form-control"
+                type="password"
+                v-model="repeatPassword"
+                id="rePassword"
+                placeholder="Repeat Password"
+              />
+              <label for="rePassword">Repeat Password</label>
+            </div>
             <ShowPassButton @click="hidePassword = !hidePassword" />
           </div>
         </div>

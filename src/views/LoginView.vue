@@ -5,7 +5,6 @@ import ForgotPModal from "@/components/ForgotPasswordModal.vue";
 import ShowPassButton from "@/components/inputs/icons/ShowPassButton.vue";
 import HidePassButton from "@/components/inputs/icons/HidePassButton.vue";
 import Spinner1 from "@/components/Spinner1.vue";
-import router from "@/router/index";
 import NavBar from "@/components/NavBar.vue";
 import FooterBar from "@/components/Footer.vue";
 import { auth, signInGoogleUser } from "@/firebase";
@@ -19,6 +18,8 @@ const password = ref<string>("");
 const errorMessage = ref<string | undefined>();
 const loading = ref<boolean>(false);
 const hidePassword = ref<boolean>(true);
+
+// Implement floating label to form-control
 
 async function signIn() {
   try {
@@ -56,28 +57,41 @@ async function loginGoogleUser() {
         <h2>Log In as an existing user</h2>
       </div>
       <div class="col">
-        <div class="mb-3">
-          <label for="email" class="form-label ms-1">Email:</label>
-          <input type="email" v-model="email" id="email" class="form-control" />
+        <div class="form-floating mb-3">
+          <input
+            type="email"
+            v-model="email"
+            class="form-control"
+            id="email"
+            placeholder="Email"
+          />
+          <label for="email">Email</label>
         </div>
         <div class="mb-3">
-          <label for="password" class="form-label ms-1">Password:</label>
           <div v-if="hidePassword" class="input-group mb-3">
-            <input
-              class="form-control"
-              type="password"
-              v-model="password"
-              id="password"
-            />
+            <div class="form-floating">
+              <input
+                class="form-control"
+                type="password"
+                v-model="password"
+                id="password"
+                placeholder="Password"
+              />
+              <label for="password">Password:</label>
+            </div>
             <HidePassButton @click="hidePassword = !hidePassword" />
           </div>
           <div v-else class="input-group mb-3">
-            <input
-              class="form-control"
-              type="text"
-              v-model="password"
-              id="password"
-            />
+            <div class="form-floating">
+              <input
+                class="form-control"
+                type="text"
+                v-model="password"
+                id="password"
+                placeholder="Password"
+              />
+              <label for="password">Password:</label>
+            </div>
             <ShowPassButton @click="hidePassword = !hidePassword" />
           </div>
           <a

@@ -5,8 +5,10 @@ import { signOut } from "firebase/auth";
 import { ref } from "vue";
 import BooksInnLogo from "./logos/BooksInnLogo.vue";
 import { generateFirebaseAuthErrorMessage } from "@/errorHandler";
+import router from "@/router";
 
 const userState = ref<string | null>(localStorage.getItem("userIsLogedIn"));
+const currentRoute = ref<string>(router.currentRoute.value.path);
 
 async function signOutUser() {
   try {
@@ -30,8 +32,10 @@ async function signOutUser() {
           <span class="ms-2 fs-4">Books' Inn</span></a
         >
       </div>
-      <div v-if="userState">
-        <button class="btn btn-warning me-2">Edit Profile</button>
+      <div v-if="userState" class="d-flex">
+        <div v-if="currentRoute != '/user-creation'">
+          <button class="btn btn-warning me-2">Edit Profile</button>
+        </div>
         <button class="btn btn-warning me-2" @click="signOutUser()">
           Sign Out
         </button>

@@ -16,7 +16,7 @@ const notify = () => {
     autoClose:3000,
     theme:'colored',
     type: 'success',
-    position: 'bottom-right'
+    position: 'top-right'
   })
 }
 

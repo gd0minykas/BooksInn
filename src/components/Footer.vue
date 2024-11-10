@@ -10,7 +10,7 @@ const currentRoute = ref<string>(router.currentRoute.value.path);
   <div
     class="position-absolute bottom-0 start-50 translate-middle-x"
     id="footer-container"
-    v-if="!userState"
+    v-if="!userState || currentRoute == '/user-creation'"
   >
     <footer id="footer" class="mt-5">
       <div class="container">

@@ -25,6 +25,9 @@ export function generateFirebaseAuthErrorMessage(code: string) {
     case "auth/email-already-in-use":
       return "This Email is already in use";
 
+    case "displayed-name-left-empty":
+      return "Displayed Name is empty";
+
     default:
       return "Unhandled Error";
   }

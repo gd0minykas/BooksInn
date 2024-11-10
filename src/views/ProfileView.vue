@@ -6,9 +6,10 @@ import FooterBar from "@/components/Footer.vue";
 import { auth, db } from "@/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { type User } from "firebase/auth";
-import { toast } from "vue3-toastify";
+import router from "@/router";
 
 const user = ref<User | null>();
+const isNew = ref<boolean>();
 const loading = ref<boolean>(false);
 const userDoc = ref();
 
@@ -17,8 +18,11 @@ onMounted(async () => {
   try {
     await auth.authStateReady();
     user.value = auth.currentUser;
-    console.log(user?.value);
-    userDoc.value = await getDoc(doc(db, "users", user?.value.uid));
+    userDoc.value = await getDoc(doc(db, "users", user.value?.uid!));
+    isNew.value = userDoc.value?.data().isNew;
+    if (isNew.value) {
+      router.push("/user-creation");
+    }
   } catch (error) {
     console.log(error);
   }
@@ -33,20 +37,19 @@ onMounted(async () => {
       <Spinner1 />
     </div>
     <div v-else>
-      <OffCanvas />
       <div class="row g-5">
         <!-- Fist Section -->
-        <div class="col-12">
+        <div class="col-12" style="min-height: 180px">
           <div class="d-flex justify-content-evenly">
             <div class="d-flex justify-content-center">
               <img
-                src="../assets/img/placeholderAvatars/1.png"
+                v-if="!isNew && user?.photoURL"
+                :src="user.photoURL"
                 class="rounded-circle border border-dark"
-                style="max-width: 10rem; max-height: 10rem"
+                style="width: 8rem; height: 8rem"
                 alt="Avatar"
               />
             </div>
-            <!-- <div class="vr mx-4"></div> -->
             <div class="align-self-center">
               <span v-if="user?.displayName" class="fs-2">{{
                 user?.displayName
@@ -57,7 +60,6 @@ onMounted(async () => {
                 <span class="fs-4 ms-3" id="title">Novice</span>
               </div>
             </div>
-            <!-- <div class="vr mx-4"></div> -->
             <div class="d-flex align-self-center row">
               <span class="fs-2">Profile Level</span>
               <div>
@@ -68,13 +70,11 @@ onMounted(async () => {
                   <div
                     class="progress-bar bg-warning text-dark"
                     role="progressbar"
-                    style="width: 50%"
-                    aria-valuenow="50"
+                    style="width: 1%"
+                    aria-valuenow="1"
                     aria-valuemin="0"
                     aria-valuemax="100"
-                  >
-                    50%
-                  </div>
+                  ></div>
                 </div>
               </div>
             </div>
