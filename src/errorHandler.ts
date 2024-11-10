@@ -1,5 +1,5 @@
 export function generateFirebaseAuthErrorMessage(code: string) {
-  // console.log("Provided code: " + code);
+  console.log("Provided code: ", code);
   switch (code) {
     case "auth/invalid-credential":
       return "Provided User Credentials are invalid";
@@ -27,6 +27,9 @@ export function generateFirebaseAuthErrorMessage(code: string) {
 
     case "displayed-name-left-empty":
       return "Displayed Name is empty";
+
+    case "displayed-name-regex":
+      return "Displayed Name can only contain letters";
 
     default:
       return "Unhandled Error";

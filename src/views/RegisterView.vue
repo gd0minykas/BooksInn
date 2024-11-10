@@ -91,7 +91,7 @@ async function createGoogleUser() {
             <div class="form-floating">
               <input
                 class="form-control"
-                type="password"
+                type="text"
                 v-model="password"
                 id="password"
                 placeholder="Password"
@@ -119,7 +119,7 @@ async function createGoogleUser() {
             <div class="form-floating">
               <input
                 class="form-control"
-                type="password"
+                type="text"
                 v-model="repeatPassword"
                 id="rePassword"
                 placeholder="Repeat Password"
