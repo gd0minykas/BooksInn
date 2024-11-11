@@ -19,7 +19,6 @@ const currentRoute = ref<string>(router.currentRoute.value.path);
           <div class="col">
             <a class="d-flex navbar-brand my-3 mx-5" href="/">
               <BooksInnLogo />
-              <span class="ms-2 fs-4">Books' Inn</span>
             </a>
           </div>
           <div class="col">
@@ -61,7 +60,6 @@ const currentRoute = ref<string>(router.currentRoute.value.path);
           <div class="col">
             <a class="d-flex navbar-brand my-3 mx-5" href="/">
               <BooksInnLogo />
-              <span class="ms-2 fs-4">Books' Inn</span>
             </a>
           </div>
           <div class="col">

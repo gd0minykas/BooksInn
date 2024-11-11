@@ -31,12 +31,12 @@ onMounted(async () => {
 </script>
 
 <template>
-  <NavBar />
-  <div class="container">
+  <div id="banner">
+    <NavBar />
     <div v-if="loading">
       <Spinner1 />
     </div>
-    <div v-else>
+    <div v-else class="container">
       <div class="row g-5">
         <!-- Fist Section -->
         <div class="col-12" style="min-height: 180px">
@@ -45,36 +45,47 @@ onMounted(async () => {
               <img
                 v-if="!isNew && user?.photoURL"
                 :src="user.photoURL"
-                class="rounded-circle border border-dark"
-                style="width: 8rem; height: 8rem"
+                class="rounded-circle border border-light"
+                style="width: 10rem; height: 10rem"
                 alt="Avatar"
               />
             </div>
-            <div class="align-self-center">
-              <span v-if="user?.displayName" class="fs-2">{{
-                user?.displayName
-              }}</span>
-              <span v-else class="fs-2">Guest</span>
-              <div>
-                <label for="title" class="form-label mb-0">Title:</label>
-                <span class="fs-4 ms-3" id="title">Novice</span>
+            <div class="align-self-end">
+              <div class="mb-2">
+                <span v-if="user?.displayName" class="fs-2">{{
+                  user?.displayName
+                }}</span>
+                <span v-else class="fs-2">Guest</span>
+                <div>
+                  <label for="title" class="form-label mb-0">Title:</label>
+                  <span class="fs-4 ms-3" id="title">Novice</span>
+                </div>
               </div>
             </div>
-            <div class="d-flex align-self-center row">
-              <span class="fs-2">Profile Level</span>
-              <div>
-                <span class="fs-8">Level: {{ 1 }}</span>
+            <div class="d-flex align-self-end row">
+              <div class="mt-4">
+                <span class="fs-3">Profile Level</span>
+                <div>
+                  <span class="fs-8">Level: {{ 1 }}</span>
+                </div>
+                <div>
+                  <div class="progress border border-dark mt-1">
+                    <div
+                      class="progress-bar bg-warning text-dark"
+                      role="progressbar"
+                      style="width: 1%"
+                      aria-valuenow="1"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                    ></div>
+                  </div>
+                </div>
               </div>
+            </div>
+            <div class="d-flex align-self-end row">
               <div>
-                <div class="progress border border-dark mt-1">
-                  <div
-                    class="progress-bar bg-warning text-dark"
-                    role="progressbar"
-                    style="width: 1%"
-                    aria-valuenow="1"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  ></div>
+                <div>
+                  <button class="btn btn-warning me-2">Edit Profile</button>
                 </div>
               </div>
             </div>
@@ -159,11 +170,22 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+    <FooterBar v-if="!loading" />
   </div>
-  <FooterBar v-if="!loading" />
 </template>
 
 <style>
+#banner {
+  background-image: url("../assets/img/background.jpeg");
+  background-size: 550px;
+  background-color: #ffffff;
+  height: 10rem;
+}
+
+#canvas {
+  background-color: transparent;
+}
+
 #cards {
   background-color: #e0cdbf;
   border: none;

@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+import { FirebaseError, initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { getStorage, ref as stRef } from "firebase/storage";
@@ -9,11 +9,13 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithPopup,
+  signOut,
   type User,
   type UserCredential,
 } from "firebase/auth";
 import { ref } from "vue";
 import router from "./router";
+import { generateFirebaseAuthErrorMessage } from "./errorHandler";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -146,6 +148,17 @@ export async function signInGoogleUser() {
       auth.currentUser?.displayName,
       createdUserWithProviders.value.user.metadata.creationTime
     );
+  }
+}
+
+export async function signOutUser() {
+  try {
+    signOut(auth);
+    localStorage.removeItem("userIsLogedIn");
+  } catch (error) {
+    if (error instanceof FirebaseError) {
+      console.log(generateFirebaseAuthErrorMessage(error.code));
+    }
   }
 }
 
