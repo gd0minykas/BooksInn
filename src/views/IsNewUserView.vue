@@ -60,6 +60,7 @@ async function finishUserCreation() {
         });
         await updateDoc(doc(db, "users", user.value.uid), {
           Name: displayedName.value,
+          AvatarIndex: index.value,
           isNew: false,
           updated: new Date().toUTCString(),
         });
@@ -71,9 +72,6 @@ async function finishUserCreation() {
         "displayed-name-left-empty"
       );
     }
-
-    // Edit user auth(displayName and avatar url?)
-    // get
   } catch (error) {
     if (error instanceof FirebaseError) {
       errorMessage.value = generateFirebaseAuthErrorMessage(error.code);

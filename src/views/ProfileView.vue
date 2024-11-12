@@ -1,17 +1,21 @@
 <script async setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import NavBar from "@/components/NavBar.vue";
 import Spinner1 from "@/components/Spinner1.vue";
 import FooterBar from "@/components/Footer.vue";
-import { auth, db } from "@/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import LeftArrow from "@/components/inputs/icons/LeftArrow.vue";
+import RightArrow from "@/components/inputs/icons/RightArrow.vue";
+import { auth, db, avatarsList } from "@/firebase";
+import { doc, DocumentSnapshot, getDoc } from "firebase/firestore";
 import { type User } from "firebase/auth";
 import router from "@/router";
 
 const user = ref<User | null>();
 const isNew = ref<boolean>();
+const editingMode = ref<boolean>();
+const index = ref<number>(0);
 const loading = ref<boolean>(false);
-const userDoc = ref();
+const userDoc = ref<DocumentSnapshot>();
 
 onMounted(async () => {
   loading.value = true;
@@ -19,7 +23,8 @@ onMounted(async () => {
     await auth.authStateReady();
     user.value = auth.currentUser;
     userDoc.value = await getDoc(doc(db, "users", user.value?.uid!));
-    isNew.value = userDoc.value?.data().isNew;
+    isNew.value = await userDoc.value?.data()?.isNew;
+    index.value = await userDoc.value?.data()?.AvatarIndex;
     if (isNew.value) {
       router.push("/user-creation");
     }
@@ -27,6 +32,21 @@ onMounted(async () => {
     console.log(error);
   }
   loading.value = false;
+});
+
+async function saveChanges() {
+  console.log("lol");
+}
+
+watch(editingMode, () => console.log(editingMode.value));
+
+// Galery, Might be a better solution.
+watch(index, () => {
+  if (index.value === -1) {
+    index.value = 49;
+  } else if (index.value === 50) {
+    index.value = 0;
+  }
 });
 </script>
 
@@ -42,13 +62,43 @@ onMounted(async () => {
         <div class="col-12" style="min-height: 180px">
           <div class="d-flex justify-content-evenly">
             <div class="d-flex justify-content-center">
-              <img
-                v-if="!isNew && user?.photoURL"
-                :src="user.photoURL"
-                class="rounded-circle border border-light"
-                style="width: 10rem; height: 10rem"
-                alt="Avatar"
-              />
+              <div id="avatarPlace">
+                <div v-if="editingMode">
+                  <div class="d-flex justify-content-center">
+                    <img
+                      :src="avatarsList[index]"
+                      class="rounded-circle border border-light"
+                      style="width: 7.5rem; height: 7.5rem"
+                      alt="Avatar"
+                    />
+                  </div>
+                  <div class="d-flex justify-content-center mt-2">
+                    <button
+                      type="button"
+                      class="btn btn-warning btn-sm mx-1"
+                      @click="() => index--"
+                    >
+                      <LeftArrow />
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-warning btn-sm mx-1"
+                      @click="() => index++"
+                    >
+                      <RightArrow />
+                    </button>
+                  </div>
+                </div>
+                <div v-else>
+                  <img
+                    v-if="!isNew && user?.photoURL"
+                    :src="user.photoURL"
+                    class="rounded-circle border border-light"
+                    style="width: 10rem; height: 10rem"
+                    alt="Avatar"
+                  />
+                </div>
+              </div>
             </div>
             <div class="align-self-end">
               <div class="mb-2">
@@ -82,10 +132,33 @@ onMounted(async () => {
                 </div>
               </div>
             </div>
-            <div class="d-flex align-self-end row">
-              <div>
+            <div v-if="!editingMode" class="d-flex align-self-center">
+              <div class="mt-5">
                 <div>
-                  <button class="btn btn-warning me-2">Edit Profile</button>
+                  <button
+                    class="btn btn-warning"
+                    @click="editingMode = !editingMode"
+                  >
+                    Edit Profile
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div v-else class="d-flex align-self-end">
+              <div class="mt-5">
+                <div class="d-flex flex-column">
+                  <button
+                    class="btn btn-warning"
+                    @click="editingMode = !editingMode"
+                  >
+                    Edit Profile
+                  </button>
+                  <button
+                    class="btn btn-warning btn-sm mt-2"
+                    @click="saveChanges()"
+                  >
+                    Save Changes
+                  </button>
                 </div>
               </div>
             </div>
@@ -170,8 +243,8 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-    <FooterBar v-if="!loading" />
   </div>
+  <FooterBar v-if="!loading" />
 </template>
 
 <style>
@@ -195,5 +268,9 @@ onMounted(async () => {
 .nav-item {
   background-color: #e0cdbf;
   border-radius: 5px 5px 0 0;
+}
+
+#avatarPlace {
+  min-width: 160px;
 }
 </style>

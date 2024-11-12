@@ -139,13 +139,14 @@ export async function createUserWithEmail(email: string, password: string) {
 
 export async function signInGoogleUser() {
   createdUserWithProviders.value = await signInWithPopup(auth, provider);
-  const userDoc = await getDoc(
-    doc(db, "users", createdUserWithProviders.value.user.uid)
-  );
-  if (createdUserWithProviders.value && !userDoc.exists()) {
+  console.log(createdUserWithProviders.value.user.metadata);
+  if (
+    createdUserWithProviders.value.user.metadata.creationTime ==
+    createdUserWithProviders.value.user.metadata.lastSignInTime
+  ) {
     await createUserOnDb(
       createdUserWithProviders.value.user.uid,
-      auth.currentUser?.displayName,
+      createdUserWithProviders.value.user.displayName,
       createdUserWithProviders.value.user.metadata.creationTime
     );
   }
