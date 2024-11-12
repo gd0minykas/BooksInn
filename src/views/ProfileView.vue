@@ -5,17 +5,37 @@ import Spinner1 from "@/components/Spinner1.vue";
 import FooterBar from "@/components/Footer.vue";
 import LeftArrow from "@/components/inputs/icons/LeftArrow.vue";
 import RightArrow from "@/components/inputs/icons/RightArrow.vue";
+import ErrorMessage from "@/components/inputs/ErrorMessage.vue";
 import { auth, db, avatarsList } from "@/firebase";
-import { doc, DocumentSnapshot, getDoc } from "firebase/firestore";
-import { type User } from "firebase/auth";
+import { doc, DocumentSnapshot, getDoc, updateDoc } from "firebase/firestore";
+import { updateProfile, type User } from "firebase/auth";
 import router from "@/router";
+import { FirebaseError } from "firebase/app";
+import { generateFirebaseAuthErrorMessage } from "@/errorHandler";
+import { error } from "console";
+import { toast } from "vue3-toastify";
 
 const user = ref<User | null>();
-const isNew = ref<boolean>();
 const editingMode = ref<boolean>();
+// from db
+const isNew = ref<boolean>();
 const index = ref<number>(0);
-const loading = ref<boolean>(false);
 const userDoc = ref<DocumentSnapshot>();
+const displayedName = ref<string | undefined>();
+
+const loading = ref<boolean>(false);
+const loadingForm = ref<boolean>(false);
+const errorMessage = ref<string | undefined>();
+const regex: RegExp = new RegExp(/^[a-zA-Z_ ]+$/);
+
+const errorNotification = (error: string) => {
+  toast(`${error}`, {
+    autoClose: 6000,
+    theme: "colored",
+    type: "error",
+    position: "bottom-right",
+  });
+};
 
 onMounted(async () => {
   loading.value = true;
@@ -25,6 +45,7 @@ onMounted(async () => {
     userDoc.value = await getDoc(doc(db, "users", user.value?.uid!));
     isNew.value = await userDoc.value?.data()?.isNew;
     index.value = await userDoc.value?.data()?.AvatarIndex;
+    displayedName.value = await userDoc.value?.data()?.Name;
     if (isNew.value) {
       router.push("/user-creation");
     }
@@ -34,13 +55,7 @@ onMounted(async () => {
   loading.value = false;
 });
 
-async function saveChanges() {
-  console.log("lol");
-}
-
-watch(editingMode, () => console.log(editingMode.value));
-
-// Galery, Might be a better solution.
+// EDITING PART. Galery, Might be a better solution.
 watch(index, () => {
   if (index.value === -1) {
     index.value = 49;
@@ -48,6 +63,45 @@ watch(index, () => {
     index.value = 0;
   }
 });
+
+async function saveChanges() {
+  loadingForm.value = true;
+  try {
+    if (user.value && displayedName.value) {
+      if (!displayedName.value.match(regex)) {
+        errorMessage.value = generateFirebaseAuthErrorMessage(
+          "displayed-name-regex"
+        );
+        errorNotification(errorMessage.value);
+      } else {
+        await updateProfile(user.value, {
+          displayName: displayedName.value,
+          photoURL: avatarsList[index.value],
+        });
+        await updateDoc(doc(db, "users", user.value.uid), {
+          Name: displayedName.value,
+          AvatarIndex: index.value,
+          isNew: false,
+          updated: new Date().toUTCString(),
+        });
+        router.push("/");
+      }
+      loadingForm.value = false;
+      editingMode.value = !editingMode.value;
+    } else {
+      errorMessage.value = generateFirebaseAuthErrorMessage(
+        "displayed-name-left-empty"
+      );
+      errorNotification(errorMessage.value);
+    }
+    loadingForm.value = false;
+  } catch (error) {
+    if (error instanceof FirebaseError) {
+      errorMessage.value = generateFirebaseAuthErrorMessage(error.code);
+      errorNotification(errorMessage.value);
+    }
+  }
+}
 </script>
 
 <template>
@@ -101,14 +155,28 @@ watch(index, () => {
               </div>
             </div>
             <div class="align-self-end">
-              <div class="mb-2">
-                <span v-if="user?.displayName" class="fs-2">{{
-                  user?.displayName
-                }}</span>
-                <span v-else class="fs-2">Guest</span>
+              <div v-if="editingMode" class="mb-2 justify-content-center">
                 <div>
-                  <label for="title" class="form-label mb-0">Title:</label>
-                  <span class="fs-4 ms-3" id="title">Novice</span>
+                  <input
+                    v-model="displayedName"
+                    type="text"
+                    class="form-control form-control-lg"
+                    placeholder="Displayed Name"
+                  />
+                </div>
+                <div class="d-flex justify-content-center">
+                  <span class="fs-4">Novice</span>
+                </div>
+              </div>
+              <div v-else class="mb-2 justify-content-center">
+                <div>
+                  <span v-if="user?.displayName" class="fs-2">{{
+                    user?.displayName
+                  }}</span>
+                  <span v-else class="fs-2">Guest</span>
+                </div>
+                <div class="d-flex justify-content-center">
+                  <span class="fs-4">Novice</span>
                 </div>
               </div>
             </div>
@@ -153,7 +221,11 @@ watch(index, () => {
                   >
                     Edit Profile
                   </button>
+                  <div v-if="loadingForm">
+                    <Spinner1 />
+                  </div>
                   <button
+                    v-else
                     class="btn btn-warning btn-sm mt-2"
                     @click="saveChanges()"
                   >
