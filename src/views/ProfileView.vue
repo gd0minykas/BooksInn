@@ -1,5 +1,5 @@
 <script async setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, provide, ref, watch } from "vue";
 import NavBar from "@/components/navigations/NavBar.vue";
 import Spinner1 from "@/components/Spinner1.vue";
 import FooterBar from "@/components/navigations/Footer.vue";
@@ -112,7 +112,7 @@ async function saveChanges() {
       <div v-if="loading">
         <Spinner1 />
       </div>
-      <div v-else id="main" class="container">
+      <div v-else id="main" class="container" style="max-width: 70%">
         <div class="row g-5">
           <!-- Fist Section -->
           <div class="col-12" style="min-height: 180px">
@@ -319,7 +319,7 @@ async function saveChanges() {
 .main {
   display: flex;
   flex-direction: column;
-  min-height: 90vh;
+  min-height: 100vh;
   /* might be bad */
 }
 
@@ -328,10 +328,6 @@ async function saveChanges() {
   background-size: 550px;
   background-color: #ffffff;
   height: 15vh;
-}
-
-#canvas {
-  background-color: transparent;
 }
 
 #cards {
