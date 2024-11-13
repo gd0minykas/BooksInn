@@ -5,14 +5,12 @@ import Spinner1 from "@/components/Spinner1.vue";
 import FooterBar from "@/components/Footer.vue";
 import LeftArrow from "@/components/inputs/icons/LeftArrow.vue";
 import RightArrow from "@/components/inputs/icons/RightArrow.vue";
-import ErrorMessage from "@/components/inputs/ErrorMessage.vue";
 import { auth, db, avatarsList } from "@/firebase";
 import { doc, DocumentSnapshot, getDoc, updateDoc } from "firebase/firestore";
 import { updateProfile, type User } from "firebase/auth";
 import router from "@/router";
 import { FirebaseError } from "firebase/app";
 import { generateFirebaseAuthErrorMessage } from "@/errorHandler";
-import { error } from "console";
 import { toast } from "vue3-toastify";
 
 const user = ref<User | null>();
@@ -85,9 +83,9 @@ async function saveChanges() {
           updated: new Date().toUTCString(),
         });
         router.push("/");
+        editingMode.value = !editingMode.value;
       }
       loadingForm.value = false;
-      editingMode.value = !editingMode.value;
     } else {
       errorMessage.value = generateFirebaseAuthErrorMessage(
         "displayed-name-left-empty"
@@ -105,210 +103,219 @@ async function saveChanges() {
 </script>
 
 <template>
-  <div id="banner">
-    <NavBar />
-    <div v-if="loading">
-      <Spinner1 />
-    </div>
-    <div v-else class="container">
-      <div class="row g-5">
-        <!-- Fist Section -->
-        <div class="col-12" style="min-height: 180px">
-          <div class="d-flex justify-content-evenly">
-            <div class="d-flex justify-content-center">
-              <div id="avatarPlace">
-                <div v-if="editingMode">
-                  <div class="d-flex justify-content-center">
+  <div class="main">
+    <div id="banner">
+      <NavBar />
+      <div v-if="loading">
+        <Spinner1 />
+      </div>
+      <div v-else id="main" class="container">
+        <div class="row g-5">
+          <!-- Fist Section -->
+          <div class="col-12" style="min-height: 180px">
+            <div class="d-flex justify-content-evenly">
+              <div class="d-flex justify-content-center">
+                <div id="avatarPlace">
+                  <div v-if="editingMode">
+                    <div class="d-flex justify-content-center">
+                      <img
+                        :src="avatarsList[index]"
+                        class="rounded-circle border border-light"
+                        style="width: 7.5rem; height: 7.5rem"
+                        alt="Avatar"
+                      />
+                    </div>
+                    <div class="d-flex justify-content-center mt-2">
+                      <button
+                        type="button"
+                        class="btn btn-warning btn-sm mx-1"
+                        @click="() => index--"
+                      >
+                        <LeftArrow />
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-warning btn-sm mx-1"
+                        @click="() => index++"
+                      >
+                        <RightArrow />
+                      </button>
+                    </div>
+                  </div>
+                  <div v-else>
                     <img
-                      :src="avatarsList[index]"
+                      v-if="!isNew && user?.photoURL"
+                      :src="user.photoURL"
                       class="rounded-circle border border-light"
-                      style="width: 7.5rem; height: 7.5rem"
+                      style="width: 10rem; height: 10rem"
                       alt="Avatar"
                     />
                   </div>
-                  <div class="d-flex justify-content-center mt-2">
+                </div>
+              </div>
+              <div class="align-self-end">
+                <div v-if="editingMode" class="mb-2 justify-content-center">
+                  <div>
+                    <input
+                      v-model="displayedName"
+                      type="text"
+                      class="form-control form-control-lg"
+                      placeholder="Displayed Name"
+                    />
+                  </div>
+                  <div class="d-flex justify-content-center">
+                    <span class="fs-4">Novice</span>
+                  </div>
+                </div>
+                <div v-else class="mb-2 justify-content-center">
+                  <div>
+                    <span v-if="user?.displayName" class="fs-2">{{
+                      user?.displayName
+                    }}</span>
+                    <span v-else class="fs-2">Guest</span>
+                  </div>
+                  <div class="d-flex justify-content-center">
+                    <span class="fs-4">Novice</span>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex align-self-end row">
+                <div class="mt-4">
+                  <span class="fs-3">Profile Level</span>
+                  <div>
+                    <span class="fs-8">Level: {{ 1 }}</span>
+                  </div>
+                  <div>
+                    <div class="progress border border-dark mt-1">
+                      <div
+                        class="progress-bar bg-warning text-dark"
+                        role="progressbar"
+                        style="width: 1%"
+                        aria-valuenow="1"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex align-self-end">
+                <div class="mt-5">
+                  <div class="d-flex flex-column">
+                    <div>
+                      <div v-if="loadingForm">
+                        <Spinner1 />
+                      </div>
+                      <button
+                        v-if="editingMode && !loadingForm"
+                        class="btn btn-warning btn-sm mt-2"
+                        @click="saveChanges()"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
                     <button
-                      type="button"
-                      class="btn btn-warning btn-sm mx-1"
-                      @click="() => index--"
+                      class="btn btn-warning mt-3"
+                      @click="editingMode = !editingMode"
                     >
-                      <LeftArrow />
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-warning btn-sm mx-1"
-                      @click="() => index++"
-                    >
-                      <RightArrow />
+                      Edit Profile
                     </button>
                   </div>
                 </div>
-                <div v-else>
-                  <img
-                    v-if="!isNew && user?.photoURL"
-                    :src="user.photoURL"
-                    class="rounded-circle border border-light"
-                    style="width: 10rem; height: 10rem"
-                    alt="Avatar"
-                  />
-                </div>
               </div>
             </div>
-            <div class="align-self-end">
-              <div v-if="editingMode" class="mb-2 justify-content-center">
-                <div>
-                  <input
-                    v-model="displayedName"
-                    type="text"
-                    class="form-control form-control-lg"
-                    placeholder="Displayed Name"
-                  />
+            <hr class="mt-4" />
+            <div class="d-flex gap-3 justify-content-center">
+              <div>
+                <button class="btn btn-outline-warning" data-bs-toggle="button">
+                  Main
+                </button>
+              </div>
+              <div>
+                <button class="btn btn-outline-warning" data-bs-toggle="button">
+                  Books
+                </button>
+              </div>
+              <div>
+                <button class="btn btn-outline-warning" data-bs-toggle="button">
+                  Reviews
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Second Section -->
+          <div class="col-6">
+            <div id="cards" class="card rounded-4">
+              <div class="card-title">
+                <div class="d-flex justify-content-center my-3">
+                  <span class="fs-4">Achievements</span>
                 </div>
+              </div>
+              <div class="card-body" id="achiementsCard">
                 <div class="d-flex justify-content-center">
-                  <span class="fs-4">Novice</span>
+                  <div class=""></div>
                 </div>
               </div>
-              <div v-else class="mb-2 justify-content-center">
-                <div>
-                  <span v-if="user?.displayName" class="fs-2">{{
-                    user?.displayName
-                  }}</span>
-                  <span v-else class="fs-2">Guest</span>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div id="cards" class="card rounded-4">
+              <div class="card-title">
+                <div class="d-flex justify-content-center my-3">
+                  <span class="fs-4">Favourite Book</span>
                 </div>
+              </div>
+              <div class="card-body" id="favBookCard">
                 <div class="d-flex justify-content-center">
-                  <span class="fs-4">Novice</span>
-                </div>
-              </div>
-            </div>
-            <div class="d-flex align-self-end row">
-              <div class="mt-4">
-                <span class="fs-3">Profile Level</span>
-                <div>
-                  <span class="fs-8">Level: {{ 1 }}</span>
-                </div>
-                <div>
-                  <div class="progress border border-dark mt-1">
-                    <div
-                      class="progress-bar bg-warning text-dark"
-                      role="progressbar"
-                      style="width: 1%"
-                      aria-valuenow="1"
-                      aria-valuemin="0"
-                      aria-valuemax="100"
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div v-if="!editingMode" class="d-flex align-self-center">
-              <div class="mt-5">
-                <div>
-                  <button
-                    class="btn btn-warning"
-                    @click="editingMode = !editingMode"
-                  >
-                    Edit Profile
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div v-else class="d-flex align-self-end">
-              <div class="mt-5">
-                <div class="d-flex flex-column">
-                  <button
-                    class="btn btn-warning"
-                    @click="editingMode = !editingMode"
-                  >
-                    Edit Profile
-                  </button>
-                  <div v-if="loadingForm">
-                    <Spinner1 />
-                  </div>
-                  <button
-                    v-else
-                    class="btn btn-warning btn-sm mt-2"
-                    @click="saveChanges()"
-                  >
-                    Save Changes
-                  </button>
+                  <div class="align-self-center"></div>
                 </div>
               </div>
             </div>
           </div>
-          <hr />
-        </div>
 
-        <!-- Second Section -->
-        <div class="col-6">
-          <div id="cards" class="card rounded-4">
-            <div class="card-title">
-              <div class="d-flex justify-content-center my-3">
-                <span class="fs-4">Achievements</span>
-              </div>
+          <!-- Third Section -->
+          <div class="col-12">
+            <div class="mx-3">
+              <ul class="nav nav-tabs">
+                <li class="nav-item">
+                  <button class="nav-link link-dark" href="#">Read</button>
+                </li>
+                <li class="nav-item">
+                  <button class="nav-link link-dark" href="#">To Read</button>
+                </li>
+                <li class="nav-item">
+                  <button class="nav-link link-dark" href="#">Reading</button>
+                </li>
+              </ul>
             </div>
-            <div class="card-body" id="achiementsCard">
-              <div class="d-flex justify-content-center">
-                <div class=""></div>
+            <div id="cards" class="card rounded-4">
+              <div class="card-title">
+                <div class="d-flex justify-content-center my-3">
+                  <span class="fs-4">Books</span>
+                </div>
+              </div>
+              <div class="card-body" id="favBookCard">
+                <div class="d-flex justify-content-center">
+                  <div class="align-self-center"></div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="col-6">
-          <div id="cards" class="card rounded-4">
-            <div class="card-title">
-              <div class="d-flex justify-content-center my-3">
-                <span class="fs-4">Favourite Book</span>
+          <!-- Forth Section -->
+          <div class="col-12">
+            <div id="cards" class="card rounded-4">
+              <div class="card-title">
+                <div class="d-flex justify-content-center my-3">
+                  <span class="fs-4">Reviews</span>
+                </div>
               </div>
-            </div>
-            <div class="card-body" id="favBookCard">
-              <div class="d-flex justify-content-center">
-                <div class="align-self-center"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Third Section -->
-        <div class="col-12">
-          <div class="mx-3">
-            <ul class="nav nav-tabs">
-              <li class="nav-item">
-                <button class="nav-link link-dark" href="#">Read</button>
-              </li>
-              <li class="nav-item">
-                <button class="nav-link link-dark" href="#">To Read</button>
-              </li>
-              <li class="nav-item">
-                <button class="nav-link link-dark" href="#">Reading</button>
-              </li>
-            </ul>
-          </div>
-          <div id="cards" class="card rounded-4">
-            <div class="card-title">
-              <div class="d-flex justify-content-center my-3">
-                <span class="fs-4">Books</span>
-              </div>
-            </div>
-            <div class="card-body" id="favBookCard">
-              <div class="d-flex justify-content-center">
-                <div class="align-self-center"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Forth Section -->
-        <div class="col-12">
-          <div id="cards" class="card rounded-4">
-            <div class="card-title">
-              <div class="d-flex justify-content-center my-3">
-                <span class="fs-4">Reviews</span>
-              </div>
-            </div>
-            <div class="card-body" id="favBookCard">
-              <div class="d-flex justify-content-center">
-                <div class="align-self-center"></div>
+              <div class="card-body" id="favBookCard">
+                <div class="d-flex justify-content-center">
+                  <div class="align-self-center"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -320,6 +327,12 @@ async function saveChanges() {
 </template>
 
 <style>
+.main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 #banner {
   background-image: url("../assets/img/background.jpeg");
   background-size: 550px;
