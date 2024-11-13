@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import router from "@/router/index";
-import BooksInnLogo from "./logos/BooksInnLogo.vue";
+import BooksInnLogo from "../logos/BooksInnLogo.vue";
 import { ref, computed } from "vue";
 // class="position-absolute bottom-0 start-50 translate-middle-x"
 

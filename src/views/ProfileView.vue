@@ -1,8 +1,8 @@
 <script async setup lang="ts">
 import { onMounted, ref, watch } from "vue";
-import NavBar from "@/components/NavBar.vue";
+import NavBar from "@/components/navigations/NavBar.vue";
 import Spinner1 from "@/components/Spinner1.vue";
-import FooterBar from "@/components/Footer.vue";
+import FooterBar from "@/components/navigations/Footer.vue";
 import LeftArrow from "@/components/inputs/icons/LeftArrow.vue";
 import RightArrow from "@/components/inputs/icons/RightArrow.vue";
 import { auth, db, avatarsList } from "@/firebase";
@@ -12,6 +12,9 @@ import router from "@/router";
 import { FirebaseError } from "firebase/app";
 import { generateFirebaseAuthErrorMessage } from "@/errorHandler";
 import { toast } from "vue3-toastify";
+import Home from "@/components/Home.vue";
+import Books from "@/components/Books.vue";
+import Reviews from "@/components/Reviews.vue";
 
 const user = ref<User | null>();
 const editingMode = ref<boolean>();
@@ -225,98 +228,84 @@ async function saveChanges() {
               </div>
             </div>
             <hr class="mt-4" />
-            <div class="d-flex gap-3 justify-content-center">
-              <div>
-                <button class="btn btn-outline-warning" data-bs-toggle="button">
-                  Main
-                </button>
-              </div>
-              <div>
-                <button class="btn btn-outline-warning" data-bs-toggle="button">
-                  Books
-                </button>
-              </div>
-              <div>
-                <button class="btn btn-outline-warning" data-bs-toggle="button">
-                  Reviews
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Second Section -->
-          <div class="col-6">
-            <div id="cards" class="card rounded-4">
-              <div class="card-title">
-                <div class="d-flex justify-content-center my-3">
-                  <span class="fs-4">Achievements</span>
-                </div>
-              </div>
-              <div class="card-body" id="achiementsCard">
-                <div class="d-flex justify-content-center">
-                  <div class=""></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-6">
-            <div id="cards" class="card rounded-4">
-              <div class="card-title">
-                <div class="d-flex justify-content-center my-3">
-                  <span class="fs-4">Favourite Book</span>
-                </div>
-              </div>
-              <div class="card-body" id="favBookCard">
-                <div class="d-flex justify-content-center">
-                  <div class="align-self-center"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Third Section -->
-          <div class="col-12">
-            <div class="mx-3">
-              <ul class="nav nav-tabs">
-                <li class="nav-item">
-                  <button class="nav-link link-dark" href="#">Read</button>
+            <div class="d-flex justify-content-center">
+              <ul
+                class="nav nav-pills mb-3 gap-3"
+                id="pills-tab"
+                role="tablist"
+              >
+                <li class="nav-item" role="presentation">
+                  <button
+                    class="btn btn-outline-warning active"
+                    id="pills-home-tab"
+                    data-bs-toggle="pill"
+                    data-bs-target="#pills-home"
+                    type="button"
+                    role="tab"
+                    aria-controls="pills-home"
+                    aria-selected="true"
+                  >
+                    Home
+                  </button>
                 </li>
-                <li class="nav-item">
-                  <button class="nav-link link-dark" href="#">To Read</button>
+                <li class="nav-item" role="presentation">
+                  <button
+                    class="btn btn-outline-warning"
+                    id="pills-books-tab"
+                    data-bs-toggle="pill"
+                    data-bs-target="#pills-books"
+                    type="button"
+                    role="tab"
+                    aria-controls="pills-books"
+                    aria-selected="false"
+                  >
+                    Books
+                  </button>
                 </li>
-                <li class="nav-item">
-                  <button class="nav-link link-dark" href="#">Reading</button>
+                <li class="nav-item" role="presentation">
+                  <button
+                    class="btn btn-outline-warning"
+                    id="pills-reviews-tab"
+                    data-bs-toggle="pill"
+                    data-bs-target="#pills-reviews"
+                    type="button"
+                    role="tab"
+                    aria-controls="pills-reviews"
+                    aria-selected="false"
+                  >
+                    Reviews
+                  </button>
                 </li>
               </ul>
             </div>
-            <div id="cards" class="card rounded-4">
-              <div class="card-title">
-                <div class="d-flex justify-content-center my-3">
-                  <span class="fs-4">Books</span>
-                </div>
-              </div>
-              <div class="card-body" id="favBookCard">
-                <div class="d-flex justify-content-center">
-                  <div class="align-self-center"></div>
-                </div>
-              </div>
-            </div>
           </div>
-
-          <!-- Forth Section -->
-          <div class="col-12">
-            <div id="cards" class="card rounded-4">
-              <div class="card-title">
-                <div class="d-flex justify-content-center my-3">
-                  <span class="fs-4">Reviews</span>
-                </div>
-              </div>
-              <div class="card-body" id="favBookCard">
-                <div class="d-flex justify-content-center">
-                  <div class="align-self-center"></div>
-                </div>
-              </div>
+          <div class="tab-content" id="pills-tabContent">
+            <div
+              class="tab-pane fade show active"
+              id="pills-home"
+              role="tabpanel"
+              aria-labelledby="pills-home-tab"
+              tabindex="0"
+            >
+              <Home />
+            </div>
+            <div
+              class="tab-pane fade"
+              id="pills-books"
+              role="tabpanel"
+              aria-labelledby="pills-books-tab"
+              tabindex="0"
+            >
+              <Books />
+            </div>
+            <div
+              class="tab-pane fade"
+              id="pills-reviews"
+              role="tabpanel"
+              aria-labelledby="pills-reviews-tab"
+              tabindex="0"
+            >
+              <Reviews />
             </div>
           </div>
         </div>
@@ -330,14 +319,15 @@ async function saveChanges() {
 .main {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 90vh;
+  /* might be bad */
 }
 
 #banner {
   background-image: url("../assets/img/background.jpeg");
   background-size: 550px;
   background-color: #ffffff;
-  height: 10rem;
+  height: 15vh;
 }
 
 #canvas {
@@ -348,11 +338,6 @@ async function saveChanges() {
   background-color: #e0cdbf;
   border: none;
   box-shadow: 5px 5px 2px #b5b4b3;
-}
-
-.nav-item {
-  background-color: #e0cdbf;
-  border-radius: 5px 5px 0 0;
 }
 
 #avatarPlace {

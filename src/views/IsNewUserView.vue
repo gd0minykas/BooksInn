@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import NavBar from "@/components/NavBar.vue";
+import NavBar from "@/components/navigations/NavBar.vue";
 import Spinner1 from "@/components/Spinner1.vue";
-import FooterBar from "@/components/Footer.vue";
+import FooterBar from "@/components/navigations/Footer.vue";
 import LeftArrow from "@/components/inputs/icons/LeftArrow.vue";
 import RightArrow from "@/components/inputs/icons/RightArrow.vue";
 import ErrorMessage from "@/components/inputs/ErrorMessage.vue";

@@ -1,4 +1,6 @@
 <script setup lang="ts"></script>
 <template>
-  <div></div>
+  <div class="tab-content" id="pills-tabContent">
+    <slot />
+  </div>
 </template>

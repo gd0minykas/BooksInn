@@ -3,7 +3,7 @@ import { auth, signOutUser } from "@/firebase";
 import { FirebaseError } from "firebase/app";
 import { signOut } from "firebase/auth";
 import { ref } from "vue";
-import BooksInnLogo from "./logos/BooksInnLogo.vue";
+import BooksInnLogo from "../logos/BooksInnLogo.vue";
 import { generateFirebaseAuthErrorMessage } from "@/errorHandler";
 import router from "@/router";
 

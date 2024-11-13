@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import GoogleLogo from "@/components/logos/GoogleLogo.vue";
 import ErrorMessage from "@/components/inputs/ErrorMessage.vue";
-import ForgotPModal from "@/components/ForgotPasswordModal.vue";
+import ForgotPModal from "@/components/modals/ForgotPasswordModal.vue";
 import ShowPassButton from "@/components/inputs/icons/ShowPassButton.vue";
 import HidePassButton from "@/components/inputs/icons/HidePassButton.vue";
 import Spinner1 from "@/components/Spinner1.vue";
-import NavBar from "@/components/NavBar.vue";
-import FooterBar from "@/components/Footer.vue";
+import NavBar from "@/components/navigations/NavBar.vue";
+import FooterBar from "@/components/navigations/Footer.vue";
 import { auth, signInGoogleUser } from "@/firebase";
 import { generateFirebaseAuthErrorMessage } from "@/errorHandler";
 import { FirebaseError } from "firebase/app";
