@@ -139,7 +139,6 @@ export async function createUserWithEmail(email: string, password: string) {
 
 export async function signInGoogleUser() {
   createdUserWithProviders.value = await signInWithPopup(auth, provider);
-  console.log(createdUserWithProviders.value.user.metadata);
   if (
     createdUserWithProviders.value.user.metadata.creationTime ==
     createdUserWithProviders.value.user.metadata.lastSignInTime

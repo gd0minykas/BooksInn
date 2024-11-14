@@ -54,7 +54,11 @@ import Add from "./logos/Add.vue";
           <div class="mx-5 d-flex justify-content-between my-3">
             <span class="fs-3">Books</span>
             <div>
-              <a href="#" class="link-dark" @click="() => console.log('add')"
+              <a
+                href="#"
+                class="link-dark"
+                data-bs-toggle="modal"
+                data-bs-target="#bookSearchModal"
                 ><Add
               /></a>
             </div>

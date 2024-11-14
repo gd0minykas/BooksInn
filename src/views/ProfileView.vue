@@ -15,6 +15,7 @@ import { toast } from "vue3-toastify";
 import Home from "@/components/Home.vue";
 import Books from "@/components/Books.vue";
 import Reviews from "@/components/Reviews.vue";
+import BookSearchModal from "@/components/modals/BookSearchModal.vue";
 
 const user = ref<User | null>();
 const editingMode = ref<boolean>();
@@ -106,10 +107,12 @@ async function saveChanges() {
 </script>
 
 <template>
+  <BookSearchModal />
   <div class="main">
     <div id="banner">
       <NavBar />
-      <div v-if="loading">
+      <div v-if="loading" class="mt-5">
+        <div style="height: 40vh"></div>
         <Spinner1 />
       </div>
       <div v-else id="main" class="container" style="max-width: 70%">

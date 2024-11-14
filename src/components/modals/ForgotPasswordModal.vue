@@ -10,7 +10,6 @@ import { generateFirebaseAuthErrorMessage } from "@/errorHandler";
 const emailForgotPassword = ref<string>("");
 const errorMessage = ref<string | undefined>();
 
-// vue3-toastify
 const notify = () => {
   toast('Password reset link was sent successfully!', {
     autoClose:3000,

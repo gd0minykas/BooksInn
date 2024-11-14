@@ -54,15 +54,20 @@ import Add from "./logos/Add.vue";
             </ul>
           </div>
           <div>
-            <a href="#" class="link-dark" @click="() => console.log('add')"
+            <a
+              href=""
+              class="link-dark"
+              data-bs-toggle="modal"
+              data-bs-target="#bookSearchModal"
               ><Add
             /></a>
           </div>
         </div>
+        <div></div>
         <hr class="mx-5" />
       </div>
 
-      <div class="tab-content" id="myTabContent">
+      <div class="tab-content" style="min-height: 40vh" id="myTabContent">
         <div
           class="tab-pane fade show active"
           id="read-tab-pane"
