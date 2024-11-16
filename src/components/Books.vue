@@ -1,5 +1,63 @@
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
 import Add from "./logos/Add.vue";
+import type { User } from "firebase/auth";
+import {
+    collection,
+    getDocs,
+    onSnapshot,
+    type CollectionReference,
+} from "firebase/firestore";
+import { auth, db } from "@/firebase";
+
+const user = ref<User | null>();
+const readColRef = ref<CollectionReference>();
+const toreadColRef = ref<CollectionReference>();
+const readingColRef = ref<CollectionReference>();
+const ReadList = ref();
+const ToReadList = ref();
+const ReadingList = ref();
+let readBooks: any[];
+
+onMounted(async () => {
+    try {
+        await auth.authStateReady();
+        user.value = auth.currentUser;
+        // readColRef.value = collection(db, `users/${user.value?.uid}/read`);
+        // toreadColRef.value = collection(db, `users/${user.value?.uid}/to-read`);
+        // readingColRef.value = collection(
+        //     db,
+        //     `users/${user.value?.uid}/reading`
+        // );
+
+        // ReadList.value = await getDocs(readColRef.value);
+        // ToReadList.value = await getDocs(toreadColRef.value);
+        // ReadingList.value = await getDocs(readingColRef.value);
+
+        onSnapshot(
+            collection(db, `users/${user.value?.uid}/read`),
+            (querySnapshot) => {
+                ReadList.value = querySnapshot.docs;
+            }
+        );
+
+        onSnapshot(
+            collection(db, `users/${user.value?.uid}/to-read`),
+            (querySnapshot) => {
+                ToReadList.value = querySnapshot.docs;
+            }
+        );
+
+        onSnapshot(
+            collection(db, `users/${user.value?.uid}/reading`),
+            (querySnapshot) => {
+                ReadingList.value = querySnapshot.docs;
+            }
+        );
+    } catch (error) {
+        console.log(error);
+    }
+});
 </script>
 <template>
     <!-- Third Section -->
@@ -76,10 +134,34 @@ import Add from "./logos/Add.vue";
                     tabindex="0"
                 >
                     <div class="card-body pt-0" id="favBookCard">
-                        <div class="d-flex justify-content-center">
-                            <div class="align-self-center">
-                                <div class="d-flex justify-content-center my-3">
-                                    <span class="fs-4">Read</span>
+                        <div class="row g-4 mx-3">
+                            <div class="col-12 text-center my-3">
+                                <span class="fs-4">Read</span>
+                            </div>
+                            <div
+                                class="col-2"
+                                v-for="doc in ReadList"
+                                v-if="ReadList"
+                            >
+                                <img
+                                    v-if="doc.data().imgSrc"
+                                    :src="doc.data().imgSrc"
+                                    class="border border-dark"
+                                    alt="Book Cover"
+                                />
+                                <div
+                                    v-else
+                                    class="border border-dark d-flex"
+                                    style="
+                                        width: 130px;
+                                        height: 200px;
+                                        background-color: #737163;
+                                    "
+                                >
+                                    <span
+                                        class="text-center mt-3 text-white lead"
+                                        >Missing Book Cover</span
+                                    >
                                 </div>
                             </div>
                         </div>
@@ -93,10 +175,34 @@ import Add from "./logos/Add.vue";
                     tabindex="0"
                 >
                     <div class="card-body pt-0" id="favBookCard">
-                        <div class="d-flex justify-content-center">
-                            <div class="align-self-center">
-                                <div class="d-flex justify-content-center my-3">
-                                    <span class="fs-4">To Read</span>
+                        <div class="row g-4 mx-3">
+                            <div class="col-12 text-center my-3">
+                                <span class="fs-4">To Read</span>
+                            </div>
+                            <div
+                                class="col-2"
+                                v-for="doc in ToReadList"
+                                v-if="ToReadList"
+                            >
+                                <img
+                                    v-if="doc.data().imgSrc"
+                                    :src="doc.data().imgSrc"
+                                    class="border border-dark"
+                                    alt="Book Cover"
+                                />
+                                <div
+                                    v-else
+                                    class="border border-dark d-flex"
+                                    style="
+                                        width: 130px;
+                                        height: 200px;
+                                        background-color: #737163;
+                                    "
+                                >
+                                    <span
+                                        class="text-center mt-3 text-white lead"
+                                        >Missing Book Cover</span
+                                    >
                                 </div>
                             </div>
                         </div>
@@ -110,10 +216,34 @@ import Add from "./logos/Add.vue";
                     tabindex="0"
                 >
                     <div class="card-body pt-0" id="favBookCard">
-                        <div class="d-flex justify-content-center">
-                            <div class="align-self-center">
-                                <div class="d-flex justify-content-center my-3">
-                                    <span class="fs-4">Reading</span>
+                        <div class="row g-4 mx-3">
+                            <div class="col-12 text-center my-3">
+                                <span class="fs-4">Reading</span>
+                            </div>
+                            <div
+                                class="col-2"
+                                v-for="doc in ReadingList"
+                                v-if="ReadingList"
+                            >
+                                <img
+                                    v-if="doc.data().imgSrc"
+                                    :src="doc.data().imgSrc"
+                                    class="border border-dark"
+                                    alt="Book Cover"
+                                />
+                                <div
+                                    v-else
+                                    class="border border-dark d-flex"
+                                    style="
+                                        width: 130px;
+                                        height: 200px;
+                                        background-color: #737163;
+                                    "
+                                >
+                                    <span
+                                        class="text-center mt-3 text-white lead"
+                                        >Missing Book Cover</span
+                                    >
                                 </div>
                             </div>
                         </div>

@@ -1,21 +1,28 @@
 <script async setup lang="ts">
-import { onMounted, provide, ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import NavBar from "@/components/navigations/NavBar.vue";
 import Spinner1 from "@/components/Spinner1.vue";
-import FooterBar from "@/components/navigations/Footer.vue";
+// import FooterBar from "@/components/navigations/Footer.vue";
 import LeftArrow from "@/components/inputs/icons/LeftArrow.vue";
 import RightArrow from "@/components/inputs/icons/RightArrow.vue";
+import Home from "@/components/Home.vue";
+import Books from "@/components/Books.vue";
+import Reviews from "@/components/Reviews.vue";
+import BookSearchModal from "@/components/modals/BookSearchModal.vue";
 import { auth, db, avatarsList } from "@/firebase";
-import { doc, DocumentSnapshot, getDoc, updateDoc } from "firebase/firestore";
+import {
+    collection,
+    doc,
+    DocumentSnapshot,
+    getDoc,
+    getDocs,
+    updateDoc,
+} from "firebase/firestore";
 import { updateProfile, type User } from "firebase/auth";
 import router from "@/router";
 import { FirebaseError } from "firebase/app";
 import { generateFirebaseAuthErrorMessage } from "@/errorHandler";
 import { toast } from "vue3-toastify";
-import Home from "@/components/Home.vue";
-import Books from "@/components/Books.vue";
-import Reviews from "@/components/Reviews.vue";
-import BookSearchModal from "@/components/modals/BookSearchModal.vue";
 
 const user = ref<User | null>();
 const editingMode = ref<boolean>();

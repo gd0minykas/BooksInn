@@ -1,5 +1,43 @@
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
 import Add from "./logos/Add.vue";
+import { auth, db } from "@/firebase";
+import type { User } from "firebase/auth";
+import {
+    collection,
+    CollectionReference,
+    getDocs,
+    limit,
+    query,
+    where,
+} from "firebase/firestore";
+
+// const user = ref<User | null>();
+// const readColRef = ref<CollectionReference>();
+// const toreadColRef = ref<CollectionReference>();
+// const readingColRef = ref<CollectionReference>();
+// const queryRead = ref();
+// const queryToRead = ref();
+// const queryReading = ref();
+
+// onMounted(async () => {
+//     try {
+//         await auth.authStateReady();
+//         user.value = auth.currentUser;
+//         readColRef.value = collection(db, `users/${user.value?.uid}/read`);
+//         toreadColRef.value = collection(db, `users/${user.value?.uid}/to-read`);
+//         readingColRef.value = collection(
+//             db,
+//             `users/${user.value?.uid}/reading`
+//         );
+
+//         // queryRead.value = await getDocs(query(readColRef.value, limit(5)));
+//         // queryToRead.value = query(toreadColRef.value, limit(5));
+//         // queryReading.value = query(readingColRef.value, limit(5));
+//     } catch (error) {
+//         console.log(error);
+//     }
+// });
 </script>
 
 <template>
@@ -81,7 +119,11 @@ import Add from "./logos/Add.vue";
                 </div>
                 <div class="card-body" id="booksCard" style="min-height: 30rem">
                     <div class="d-flex justify-content-center">
-                        <div class="align-self-center"></div>
+                        <div class="align-self-center">
+                            <!-- <div class="mb-2" v-for="doc in queryRead">
+                                {{ doc.title }}
+                            </div> -->
+                        </div>
                     </div>
                 </div>
             </div>

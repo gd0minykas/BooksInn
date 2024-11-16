@@ -23,7 +23,6 @@ async function doSearch() {
             .then((response) => response.json())
             .then((result) => {
                 data.value = result.items;
-                console.log(data.value);
             });
         loadingSearch.value = false;
     } catch (error) {
@@ -54,7 +53,6 @@ function getBookDetails(
 
 async function addChosenBook(category: string) {
     if (chosenBook.id) {
-        console.log("hit");
         addBook(chosenBook, category);
     }
 }

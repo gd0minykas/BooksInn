@@ -29,7 +29,6 @@ export interface book {
 export async function addBook(data: book, category: string) {
     const user = ref<User | null>(auth.currentUser);
     const prettyCategory: string | undefined = getPrettyCategory(category);
-
     if (user.value) {
         try {
             const docRef = doc(db, "users", user.value.uid, category, data.id);
