@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import Add from "./logos/Add.vue";
 import type { User } from "firebase/auth";
 import {
@@ -7,48 +7,39 @@ import {
     getDocs,
     onSnapshot,
     type CollectionReference,
+    type Unsubscribe,
 } from "firebase/firestore";
 import { auth, db } from "@/firebase";
+import { unsubscribe } from "diagnostics_channel";
 
 const user = ref<User | null>();
-const readColRef = ref<CollectionReference>();
-const toreadColRef = ref<CollectionReference>();
-const readingColRef = ref<CollectionReference>();
 const ReadList = ref();
 const ToReadList = ref();
 const ReadingList = ref();
-let readBooks: any[];
+let unsubscribeRead: Unsubscribe;
+let unsubscribeToRead: Unsubscribe;
+let unsubscribeReading: Unsubscribe;
 
 onMounted(async () => {
     try {
         await auth.authStateReady();
         user.value = auth.currentUser;
-        // readColRef.value = collection(db, `users/${user.value?.uid}/read`);
-        // toreadColRef.value = collection(db, `users/${user.value?.uid}/to-read`);
-        // readingColRef.value = collection(
-        //     db,
-        //     `users/${user.value?.uid}/reading`
-        // );
 
-        // ReadList.value = await getDocs(readColRef.value);
-        // ToReadList.value = await getDocs(toreadColRef.value);
-        // ReadingList.value = await getDocs(readingColRef.value);
-
-        onSnapshot(
+        unsubscribeRead = onSnapshot(
             collection(db, `users/${user.value?.uid}/read`),
             (querySnapshot) => {
                 ReadList.value = querySnapshot.docs;
             }
         );
 
-        onSnapshot(
+        unsubscribeToRead = onSnapshot(
             collection(db, `users/${user.value?.uid}/to-read`),
             (querySnapshot) => {
                 ToReadList.value = querySnapshot.docs;
             }
         );
 
-        onSnapshot(
+        unsubscribeReading = onSnapshot(
             collection(db, `users/${user.value?.uid}/reading`),
             (querySnapshot) => {
                 ReadingList.value = querySnapshot.docs;
