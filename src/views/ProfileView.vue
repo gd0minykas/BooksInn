@@ -131,7 +131,7 @@ async function saveChanges() {
                 <div style="height: 40vh"></div>
                 <Spinner1 />
             </div>
-            <div v-else id="main" class="container" style="max-width: 70%">
+            <div v-else id="main" class="container">
                 <div class="row g-5">
                     <!-- Fist Section -->
                     <div class="col-12" style="min-height: 180px">
@@ -322,7 +322,9 @@ async function saveChanges() {
                             aria-labelledby="pills-home-tab"
                             tabindex="0"
                         >
-                            <Home />
+                            <div class="d-flex justify-content-center mb-5">
+                                <Home />
+                            </div>
                         </div>
                         <div
                             class="tab-pane fade"
@@ -331,7 +333,9 @@ async function saveChanges() {
                             aria-labelledby="pills-books-tab"
                             tabindex="0"
                         >
-                            <Books />
+                            <div class="d-flex justify-content-center mb-5">
+                                <Books />
+                            </div>
                         </div>
                         <div
                             class="tab-pane fade"
@@ -340,17 +344,23 @@ async function saveChanges() {
                             aria-labelledby="pills-reviews-tab"
                             tabindex="0"
                         >
-                            <Reviews />
+                            <div class="d-flex justify-content-center mb-5">
+                                <Reviews />
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <!-- <FooterBar v-if="!loading" /> -->
         </div>
     </div>
-    <FooterBar v-if="!loading" />
 </template>
 
 <style>
+html {
+    scrollbar-gutter: stable;
+}
+
 .main {
     display: flex;
     flex-direction: column;
@@ -362,7 +372,7 @@ async function saveChanges() {
     background-image: url("../assets/img/background.jpeg");
     background-size: 550px;
     background-color: #ffffff;
-    height: 15vh;
+    height: 10rem;
 }
 
 #cards {
