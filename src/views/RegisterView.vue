@@ -156,7 +156,9 @@ async function createGoogleUser() {
             </p>
           </div>
         </div>
-        <Spinner1 v-if="loading" />
+        <div class="mt-5">
+          <Spinner1 v-if="loading" />
+        </div>
       </div>
     </div>
   </div>
