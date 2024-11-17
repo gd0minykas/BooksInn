@@ -4,7 +4,7 @@ import type { User } from "firebase/auth";
 import { ref } from "vue";
 import { toast } from "vue3-toastify";
 
-function getPrettyCategory(category: string) {
+export function getPrettyCategory(category: string) {
     switch (category) {
         case "read":
             return "Read";
@@ -18,6 +18,16 @@ function getPrettyCategory(category: string) {
 }
 
 export interface book {
+    id: string;
+    title: string;
+    authors: string[];
+    categories: string[];
+    pages: number;
+    currentCategory: string;
+    imgSrc?: string;
+}
+
+export interface newBook {
     id: string;
     title: string;
     authors: string[];
@@ -40,6 +50,7 @@ export async function addBook(data: book, category: string) {
                     categories: data.categories,
                     pages: data.pages,
                     imgSrc: data.imgSrc ? data.imgSrc : null,
+                    currentCategory: category,
                     added: serverTimestamp(),
                 });
                 toast(

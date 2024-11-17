@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import Spinner1 from "@/components/Spinner1.vue";
 import Back from "../logos/Back.vue";
-import { type book, addBook } from "@/sharing";
+import { type book, type newBook, addBook } from "@/sharing";
 
 const data = ref();
 const searchResult = ref<string>();
@@ -10,7 +10,7 @@ const loadingSearch = ref<boolean>(false);
 const bookDetailsOpen = ref<boolean>(false);
 
 // for details
-let chosenBook: book;
+let chosenNewBook: newBook;
 
 async function doSearch() {
     loadingSearch.value = true;
@@ -37,7 +37,7 @@ function getBookDetails(
     _pages: number,
     _imgSrc?: string
 ) {
-    chosenBook = {
+    chosenNewBook = {
         id: _id,
         title: _title,
         authors: _authors,
@@ -50,13 +50,17 @@ function getBookDetails(
 }
 
 async function addChosenBook(category: string) {
-    if (chosenBook.id) {
-        const result = await addBook(chosenBook, category);
-        if (result == 1) {
-            console.log("added");
-        } else if (result == 0) {
-            console.log("not added");
-        }
+    if (chosenNewBook.id) {
+        let book: book = {
+            id: chosenNewBook.id,
+            title: chosenNewBook.title,
+            authors: chosenNewBook.authors,
+            categories: chosenNewBook.categories,
+            pages: chosenNewBook.pages,
+            currentCategory: category,
+            imgSrc: chosenNewBook.imgSrc,
+        };
+        const result = await addBook(book, category);
     }
 }
 
@@ -144,8 +148,8 @@ async function addChosenBook(category: string) {
                                         class="d-flex justify-content-center m-3"
                                     >
                                         <img
-                                            v-if="chosenBook.imgSrc"
-                                            :src="chosenBook.imgSrc"
+                                            v-if="chosenNewBook.imgSrc"
+                                            :src="chosenNewBook.imgSrc"
                                             class="border border-dark"
                                             alt="Book Cover"
                                         />
@@ -169,13 +173,15 @@ async function addChosenBook(category: string) {
                                     <div class="d-flex flex-column ms-4">
                                         <div>
                                             <span class="fs-5"
-                                                >"{{ chosenBook.title }}"</span
+                                                >"{{
+                                                    chosenNewBook.title
+                                                }}"</span
                                             >
                                         </div>
                                         <hr class="mt-0" />
                                         <p class="mb-0">Authors:</p>
                                         <div
-                                            v-for="author in chosenBook.authors"
+                                            v-for="author in chosenNewBook.authors"
                                         >
                                             <span class="ms-2">{{
                                                 author
@@ -183,7 +189,7 @@ async function addChosenBook(category: string) {
                                         </div>
                                         <p class="mb-0 mt-2">Categories:</p>
                                         <div
-                                            v-for="category in chosenBook.categories"
+                                            v-for="category in chosenNewBook.categories"
                                         >
                                             <span class="ms-2">{{
                                                 category
@@ -192,7 +198,7 @@ async function addChosenBook(category: string) {
                                         <p class="mb-0 mt-2">Pages:</p>
                                         <div>
                                             <span class="ms-2">{{
-                                                chosenBook.pages
+                                                chosenNewBook.pages
                                             }}</span>
                                         </div>
                                     </div>

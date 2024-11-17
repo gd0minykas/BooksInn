@@ -21,7 +21,8 @@ let unsubscribeReading: Unsubscribe;
 const booksDetailsOpen = ref<boolean>();
 
 function closeModal() {
-    console.log("closed");
+    const modal = Modal.getOrCreateInstance("#bookDetailsModal");
+    modal.hide();
     booksDetailsOpen.value = false;
 }
 
@@ -39,6 +40,7 @@ function getBookDetails(
     _authors: string[],
     _categories: string[],
     _pages: number,
+    _currentCategory: string,
     _imgSrc?: string
 ) {
     chosenBook = {
@@ -47,6 +49,7 @@ function getBookDetails(
         authors: _authors,
         categories: _categories,
         pages: _pages,
+        currentCategory: _currentCategory,
         imgSrc: _imgSrc,
     };
 
@@ -185,6 +188,7 @@ onMounted(async () => {
                                                 doc.data().authors,
                                                 doc.data().categories,
                                                 doc.data().pages,
+                                                doc.data().currentCategory,
                                                 doc.data().imgSrc
                                             );
                                         }
@@ -247,6 +251,7 @@ onMounted(async () => {
                                             doc.data().authors,
                                             doc.data().categories,
                                             doc.data().pages,
+                                            doc.data().currentCategory,
                                             doc.data().imgSrc
                                         )
                                     "
@@ -308,6 +313,7 @@ onMounted(async () => {
                                             doc.data().authors,
                                             doc.data().categories,
                                             doc.data().pages,
+                                            doc.data().currentCategory,
                                             doc.data().imgSrc
                                         )
                                     "

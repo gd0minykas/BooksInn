@@ -1,12 +1,48 @@
 <script setup lang="ts">
-import type { book } from "@/sharing";
-
+import { auth, db } from "@/firebase";
+import { addBook, getPrettyCategory, type book } from "@/sharing";
+import { deleteDoc, doc } from "firebase/firestore";
+import { toast } from "vue3-toastify";
 const props = defineProps<{
     book: book;
 }>();
 
+async function deleteBook() {
+    if (auth.currentUser?.uid) {
+        try {
+            await deleteDoc(
+                doc(
+                    db,
+                    `users/${auth.currentUser?.uid}/${props.book.currentCategory}`,
+                    props.book.id
+                )
+            );
+            toast(`${props.book.title} was deleted successfully!`, {
+                autoClose: 5000,
+                type: "success",
+                theme: "colored",
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
 async function addExistingBook(category: string) {
-    console.log(category);
+    if (auth.currentUser?.uid) {
+        try {
+            await deleteDoc(
+                doc(
+                    db,
+                    `users/${auth.currentUser?.uid}/${props.book.currentCategory}`,
+                    props.book.id
+                )
+            );
+            await addBook(props.book, category);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }
 </script>
 
@@ -43,6 +79,20 @@ async function addExistingBook(category: string) {
                 </div>
                 <div class="modal-body overflow-y-auto">
                     <div class="row">
+                        <div class="col-12 d-flex justify-content-end mb-3">
+                            <button
+                                class="btn btn-danger btn-sm"
+                                @click="
+                                    () => {
+                                        deleteBook().then(() => {
+                                            $emit('hide-modal');
+                                        });
+                                    }
+                                "
+                            >
+                                Delete
+                            </button>
+                        </div>
                         <div class="col-4">
                             <div class="d-flex justify-content-center m-3">
                                 <img
@@ -105,21 +155,48 @@ async function addExistingBook(category: string) {
                                     <button
                                         type="submit"
                                         class="btn btn-warning"
-                                        @click="addExistingBook('read')"
+                                        @click="
+                                            addExistingBook('read').then(() => {
+                                                $emit('hide-modal');
+                                            })
+                                        "
+                                        :disabled="
+                                            props.book.currentCategory == 'read'
+                                        "
                                     >
                                         Read
                                     </button>
                                     <button
                                         type="submit"
                                         class="btn btn-warning"
-                                        @click="addExistingBook('to-read')"
+                                        @click="
+                                            addExistingBook('to-read').then(
+                                                () => {
+                                                    $emit('hide-modal');
+                                                }
+                                            )
+                                        "
+                                        :disabled="
+                                            props.book.currentCategory ==
+                                            'to-read'
+                                        "
                                     >
                                         To Read
                                     </button>
                                     <button
                                         type="submit"
                                         class="btn btn-warning"
-                                        @click="addExistingBook('reading')"
+                                        @click="
+                                            addExistingBook('reading').then(
+                                                () => {
+                                                    $emit('hide-modal');
+                                                }
+                                            )
+                                        "
+                                        :disabled="
+                                            props.book.currentCategory ==
+                                            'reading'
+                                        "
                                     >
                                         Reading
                                     </button>
