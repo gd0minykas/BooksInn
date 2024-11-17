@@ -41,7 +41,8 @@ function getBookDetails(
     _categories: string[],
     _pages: number,
     _currentCategory: string,
-    _imgSrc?: string
+    _imgSrc?: string,
+    _imgSrcSmall?: string
 ) {
     chosenBook = {
         id: _id,
@@ -51,6 +52,7 @@ function getBookDetails(
         pages: _pages,
         currentCategory: _currentCategory,
         imgSrc: _imgSrc,
+        imgSrcSmall: _imgSrcSmall,
     };
 
     booksDetailsOpen.value = true;
@@ -189,7 +191,8 @@ onMounted(async () => {
                                                 doc.data().categories,
                                                 doc.data().pages,
                                                 doc.data().currentCategory,
-                                                doc.data().imgSrc
+                                                doc.data().imgSrc,
+                                                doc.data().imgSrcSmall
                                             );
                                         }
                                     "
@@ -252,7 +255,8 @@ onMounted(async () => {
                                             doc.data().categories,
                                             doc.data().pages,
                                             doc.data().currentCategory,
-                                            doc.data().imgSrc
+                                            doc.data().imgSrc,
+                                            doc.data().imgSrcSmall
                                         )
                                     "
                                     :disabled="booksDetailsOpen"
@@ -314,7 +318,8 @@ onMounted(async () => {
                                             doc.data().categories,
                                             doc.data().pages,
                                             doc.data().currentCategory,
-                                            doc.data().imgSrc
+                                            doc.data().imgSrc,
+                                            doc.data().imgSrcSmall
                                         )
                                     "
                                     :disabled="booksDetailsOpen"

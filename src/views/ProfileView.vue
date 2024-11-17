@@ -16,6 +16,7 @@ import router from "@/router";
 import { FirebaseError } from "firebase/app";
 import { generateFirebaseAuthErrorMessage } from "@/errorHandler";
 import { toast } from "vue3-toastify";
+import ReadBookListModal from "@/components/modals/ReadBookListModal.vue";
 
 const user = ref<User | null>();
 const editingMode = ref<boolean>();
@@ -106,23 +107,20 @@ async function saveChanges() {
 }
 
 /* TODO:
-  * bring back bookdetails component, because it will be used to view books also,
-  with buttons to recatogorize the book if read or reading.
-  
-  * If added to read, add pages to the xp, xp devided by 1000 is the level.
-  * Reward.ts handling the level up (if xp > 1000 => lvl1, 2000 => lvl2). Add revards to the used document subdocs achievements, titles, avatars?
-  * add favourite book from Read books list
-  * Write a review for a book from Read books lists
-  * MAIN PART DONE
-  * 
-  * Anonymous user profile viewing by id of the user. Pref username.
-  * User validation on login if email is not verified, open modal.
-  * user validation on registration after user is created, opne modal.
-
-*/
+ * add favourite book from Read books list
+ * Write a review for a book from Read books lists
+ * If added to read, add pages to the xp, xp devided by 1000 is the level.
+ * Reward.ts handling the level up (if xp > 1000 => lvl1, 2000 => lvl2). Add revards to the used document subdocs achievements, titles, avatars?
+ * MAIN PART DONE
+ *
+ * Anonymous user profile viewing by id of the user. Pref username.
+ * user Email validation
+ * Avatar picture component.
+ */
 </script>
 
 <template>
+    <ReadBookListModal v-if="user" />
     <BookSearchModal />
     <div class="main">
         <div id="banner">
@@ -323,7 +321,7 @@ async function saveChanges() {
                             tabindex="0"
                         >
                             <div class="d-flex justify-content-center mb-5">
-                                <Home />
+                                <Home v-if="user" />
                             </div>
                         </div>
                         <div
@@ -334,7 +332,7 @@ async function saveChanges() {
                             tabindex="0"
                         >
                             <div class="d-flex justify-content-center mb-5">
-                                <Books />
+                                <Books v-if="user" />
                             </div>
                         </div>
                         <div
@@ -345,7 +343,7 @@ async function saveChanges() {
                             tabindex="0"
                         >
                             <div class="d-flex justify-content-center mb-5">
-                                <Reviews />
+                                <Reviews v-if="user" />
                             </div>
                         </div>
                     </div>

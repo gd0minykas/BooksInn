@@ -35,7 +35,8 @@ function getBookDetails(
     _authors: string[],
     _categories: string[],
     _pages: number,
-    _imgSrc?: string
+    _imgSrc?: string,
+    _imgSrcSmall?: string
 ) {
     chosenNewBook = {
         id: _id,
@@ -44,6 +45,7 @@ function getBookDetails(
         categories: _categories,
         pages: _pages,
         imgSrc: _imgSrc,
+        imgSrcSmall: _imgSrcSmall,
     };
 
     bookDetailsOpen.value = true;
@@ -59,6 +61,7 @@ async function addChosenBook(category: string) {
             pages: chosenNewBook.pages,
             currentCategory: category,
             imgSrc: chosenNewBook.imgSrc,
+            imgSrcSmall: chosenNewBook.imgSrcSmall,
         };
         const result = await addBook(book, category);
     }
@@ -266,7 +269,9 @@ async function addChosenBook(category: string) {
                                                 : '-',
                                             items.volumeInfo.pageCount,
                                             items.volumeInfo.imageLinks
-                                                ?.thumbnail
+                                                ?.thumbnail,
+                                            items.volumeInfo.imageLinks
+                                                ?.smallThumbnail
                                         )
                                     "
                                 >

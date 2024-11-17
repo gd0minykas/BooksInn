@@ -6,6 +6,9 @@ import type { User } from "firebase/auth";
 import type { book } from "@/sharing";
 import {
     collection,
+    doc,
+    DocumentSnapshot,
+    getDoc,
     limit,
     onSnapshot,
     orderBy,
@@ -19,13 +22,16 @@ import { Modal } from "bootstrap";
 let chosenBook: book;
 
 const user = ref<User | null>();
+const UserRef = ref();
 const ReadListLast5 = ref();
 const ToReadListLast5 = ref();
 const ReadingListLast5 = ref();
+let unsubscribeUser: Unsubscribe;
 let unsubscribeRead: Unsubscribe;
 let unsubscribeToRead: Unsubscribe;
 let unsubscribeReading: Unsubscribe;
 const booksDetailsOpen = ref<boolean>();
+const userDoc = ref<DocumentSnapshot>();
 
 function closeModal() {
     const modal = Modal.getOrCreateInstance("#bookDetailsModal");
@@ -48,7 +54,8 @@ function getBookDetails(
     _categories: string[],
     _pages: number,
     _currentCategory: string,
-    _imgSrc?: string
+    _imgSrc?: string,
+    _imgSrcSmall?: string
 ) {
     chosenBook = {
         id: _id,
@@ -58,6 +65,7 @@ function getBookDetails(
         pages: _pages,
         currentCategory: _currentCategory,
         imgSrc: _imgSrc,
+        imgSrcSmall: _imgSrcSmall,
     };
 
     booksDetailsOpen.value = true;
@@ -68,6 +76,14 @@ onMounted(async () => {
     try {
         await auth.authStateReady();
         user.value = auth.currentUser;
+
+        unsubscribeUser = onSnapshot(
+            doc(db, "users", user.value?.uid!),
+            (querySnapshot) => {
+                UserRef.value = querySnapshot;
+                console.log(UserRef.value.data().favBook);
+            }
+        );
 
         unsubscribeRead = onSnapshot(
             query(
@@ -154,7 +170,8 @@ onMounted(async () => {
                             <a
                                 href="#"
                                 class="link-dark"
-                                @click="() => console.log('add')"
+                                data-bs-toggle="modal"
+                                data-bs-target="#readBookListModal"
                                 ><Add
                             /></a>
                         </div>
@@ -166,8 +183,62 @@ onMounted(async () => {
                     id="favBookCard"
                     style="min-height: 15rem"
                 >
-                    <div class="d-flex justify-content-center">
-                        <div class="align-self-center"></div>
+                    <div class="row mx-3" v-if="UserRef?.data()?.favBook">
+                        <div class="col-4">
+                            <div class="d-flex justify-content-center m-3">
+                                <img
+                                    v-if="UserRef?.data()?.favBook.imgSrc"
+                                    :src="UserRef?.data()?.favBook.imgSrc"
+                                    style="
+                                        width: 100px;
+                                        height: 160px;
+                                        background-color: #737163;
+                                    "
+                                    class="border border-dark"
+                                    alt="Book Cover"
+                                />
+                                <div
+                                    v-else
+                                    class="border border-dark d-flex"
+                                    style="
+                                        width: 100px;
+                                        height: 160px;
+                                        background-color: #737163;
+                                    "
+                                >
+                                    <span
+                                        class="text-center mt-3 text-white lead"
+                                        >Missing Book Cover</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="d-flex flex-column ms-4 mt-2">
+                                <div>
+                                    <span class="fs-5"
+                                        >"{{
+                                            UserRef?.data()?.favBook.title
+                                        }}"</span
+                                    >
+                                </div>
+                                <hr class="mt-0" />
+                                <p class="mb-0">Authors:</p>
+                                <div
+                                    v-for="author in UserRef?.data()?.favBook
+                                        .authors"
+                                >
+                                    <span class="ms-2">{{ author }}</span>
+                                </div>
+                                <p class="mb-0 mt-2">Categories:</p>
+                                <div
+                                    v-for="category in UserRef?.data()?.favBook
+                                        .categories"
+                                >
+                                    <span class="ms-2">{{ category }}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -215,7 +286,8 @@ onMounted(async () => {
                                             doc.data().categories,
                                             doc.data().pages,
                                             doc.data().currentCategory,
-                                            doc.data().imgSrc
+                                            doc.data().imgSrc,
+                                            doc.data().imgSrcSmall
                                         )
                                     "
                                     :disabled="booksDetailsOpen"
@@ -272,7 +344,8 @@ onMounted(async () => {
                                             doc.data().categories,
                                             doc.data().pages,
                                             doc.data().currentCategory,
-                                            doc.data().imgSrc
+                                            doc.data().imgSrc,
+                                            doc.data().imgSrcSmall
                                         )
                                     "
                                     :disabled="booksDetailsOpen"
@@ -329,7 +402,8 @@ onMounted(async () => {
                                             doc.data().categories,
                                             doc.data().pages,
                                             doc.data().currentCategory,
-                                            doc.data().imgSrc
+                                            doc.data().imgSrc,
+                                            doc.data().imgSrcSmall
                                         )
                                     "
                                     :disabled="booksDetailsOpen"

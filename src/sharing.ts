@@ -1,4 +1,10 @@
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import {
+    doc,
+    getDoc,
+    serverTimestamp,
+    setDoc,
+    updateDoc,
+} from "firebase/firestore";
 import { db, auth } from "./firebase";
 import type { User } from "firebase/auth";
 import { ref } from "vue";
@@ -17,6 +23,15 @@ export function getPrettyCategory(category: string) {
     }
 }
 
+export interface favBook {
+    title: string;
+    authors: string[];
+    categories: string[];
+    pages: number;
+    imgSrc?: string;
+    imgSrcSmall?: string;
+}
+
 export interface book {
     id: string;
     title: string;
@@ -25,6 +40,7 @@ export interface book {
     pages: number;
     currentCategory: string;
     imgSrc?: string;
+    imgSrcSmall?: string;
 }
 
 export interface newBook {
@@ -34,6 +50,24 @@ export interface newBook {
     categories: string[];
     pages: number;
     imgSrc?: string;
+    imgSrcSmall?: string;
+}
+
+export async function addFavBook(book: favBook) {
+    const user = ref<User | null>(auth.currentUser);
+    if (user.value) {
+        await updateDoc(doc(db, "users", user.value.uid), {
+            favBook: {
+                title: book.title,
+                authors: book.authors,
+                categories: book.categories,
+                pages: book.pages,
+                imgSrc: book.imgSrc,
+                imgSrcSmall: book.imgSrcSmall,
+            },
+            updated: serverTimestamp(),
+        });
+    }
 }
 
 export async function addBook(data: book, category: string) {
@@ -50,6 +84,7 @@ export async function addBook(data: book, category: string) {
                     categories: data.categories,
                     pages: data.pages,
                     imgSrc: data.imgSrc ? data.imgSrc : null,
+                    imgSrcSmall: data.imgSrcSmall ? data.imgSrcSmall : null,
                     currentCategory: category,
                     added: serverTimestamp(),
                 });
