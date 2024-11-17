@@ -50,6 +50,7 @@ export async function addBook(data: book, category: string) {
                         theme: "colored",
                     }
                 );
+                return 1;
                 /*
                     Add xp if category is read.
                     If level up => call rewards.ts function.
@@ -63,9 +64,12 @@ export async function addBook(data: book, category: string) {
                         theme: "colored",
                     }
                 );
+                return 0;
             }
         } catch (error) {
             console.log(error);
         }
+    } else {
+        console.log(user.value);
     }
 }

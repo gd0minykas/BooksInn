@@ -10,14 +10,7 @@ import Books from "@/components/Books.vue";
 import Reviews from "@/components/Reviews.vue";
 import BookSearchModal from "@/components/modals/BookSearchModal.vue";
 import { auth, db, avatarsList } from "@/firebase";
-import {
-    collection,
-    doc,
-    DocumentSnapshot,
-    getDoc,
-    getDocs,
-    updateDoc,
-} from "firebase/firestore";
+import { doc, DocumentSnapshot, getDoc, updateDoc } from "firebase/firestore";
 import { updateProfile, type User } from "firebase/auth";
 import router from "@/router";
 import { FirebaseError } from "firebase/app";

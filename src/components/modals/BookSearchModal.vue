@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { toast } from "vue3-toastify";
 import Spinner1 from "@/components/Spinner1.vue";
 import Back from "../logos/Back.vue";
 import { type book, addBook } from "@/sharing";
-// import BookDetails from "../BookDetails.vue";
 
 const data = ref();
 const searchResult = ref<string>();
@@ -53,7 +51,12 @@ function getBookDetails(
 
 async function addChosenBook(category: string) {
     if (chosenBook.id) {
-        addBook(chosenBook, category);
+        const result = await addBook(chosenBook, category);
+        if (result == 1) {
+            console.log("added");
+        } else if (result == 0) {
+            console.log("not added");
+        }
     }
 }
 
@@ -64,6 +67,7 @@ async function addChosenBook(category: string) {
     <div
         class="modal fade"
         id="bookSearchModal"
+        ref="modalRef"
         data-bs-backdrop="static"
         data-bs-keyboard="false"
         tabindex="-1"
@@ -210,7 +214,6 @@ async function addChosenBook(category: string) {
                                                 type="submit"
                                                 class="btn btn-warning"
                                                 @click="addChosenBook('read')"
-                                                data-bs-dismiss="modal"
                                             >
                                                 Read
                                             </button>
@@ -220,7 +223,6 @@ async function addChosenBook(category: string) {
                                                 @click="
                                                     addChosenBook('to-read')
                                                 "
-                                                data-bs-dismiss="modal"
                                             >
                                                 To Read
                                             </button>
@@ -230,7 +232,6 @@ async function addChosenBook(category: string) {
                                                 @click="
                                                     addChosenBook('reading')
                                                 "
-                                                data-bs-dismiss="modal"
                                             >
                                                 Reading
                                             </button>

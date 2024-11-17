@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import Add from "./logos/Add.vue";
+import type { book } from "@/sharing";
 import type { User } from "firebase/auth";
-import {
-    collection,
-    getDocs,
-    onSnapshot,
-    type CollectionReference,
-    type Unsubscribe,
-} from "firebase/firestore";
+import { collection, onSnapshot, type Unsubscribe } from "firebase/firestore";
 import { auth, db } from "@/firebase";
-import { unsubscribe } from "diagnostics_channel";
+import BookDetailsModal from "./modals/BookDetailsModal.vue";
+import { Modal } from "bootstrap";
+
+// for details
+let chosenBook: book;
 
 const user = ref<User | null>();
 const ReadList = ref();
@@ -19,6 +18,41 @@ const ReadingList = ref();
 let unsubscribeRead: Unsubscribe;
 let unsubscribeToRead: Unsubscribe;
 let unsubscribeReading: Unsubscribe;
+const booksDetailsOpen = ref<boolean>();
+
+function closeModal() {
+    console.log("closed");
+    booksDetailsOpen.value = false;
+}
+
+function openModal() {
+    setTimeout(() => {
+        const modal = Modal.getOrCreateInstance("#bookDetailsModal");
+        modal.toggle();
+        modal.show();
+    }, 1);
+}
+
+function getBookDetails(
+    _id: string,
+    _title: string,
+    _authors: string[],
+    _categories: string[],
+    _pages: number,
+    _imgSrc?: string
+) {
+    chosenBook = {
+        id: _id,
+        title: _title,
+        authors: _authors,
+        categories: _categories,
+        pages: _pages,
+        imgSrc: _imgSrc,
+    };
+
+    booksDetailsOpen.value = true;
+    openModal();
+}
 
 onMounted(async () => {
     try {
@@ -45,12 +79,19 @@ onMounted(async () => {
                 ReadingList.value = querySnapshot.docs;
             }
         );
+
+        // unsubscribe need
     } catch (error) {
         console.log(error);
     }
 });
 </script>
 <template>
+    <BookDetailsModal
+        v-if="booksDetailsOpen"
+        :book="chosenBook"
+        @hide-modal="closeModal()"
+    />
     <!-- Third Section -->
     <div class="col-12" style="max-width: 56.25rem">
         <div id="cards" class="card rounded-4">
@@ -125,7 +166,7 @@ onMounted(async () => {
                     tabindex="0"
                 >
                     <div class="card-body pt-0" id="favBookCard">
-                        <div class="row g-4 mx-3">
+                        <div class="row g-4 mb-2">
                             <div class="col-12 text-center my-3">
                                 <span class="fs-4">Read</span>
                             </div>
@@ -134,26 +175,48 @@ onMounted(async () => {
                                 v-for="doc in ReadList"
                                 v-if="ReadList"
                             >
-                                <img
-                                    v-if="doc.data().imgSrc"
-                                    :src="doc.data().imgSrc"
-                                    class="border border-dark"
-                                    alt="Book Cover"
-                                />
-                                <div
-                                    v-else
-                                    class="border border-dark d-flex"
-                                    style="
-                                        width: 130px;
-                                        height: 200px;
-                                        background-color: #737163;
+                                <button
+                                    class="my-2 d-flex btn btn-light shadow text-start"
+                                    @click="
+                                        () => {
+                                            getBookDetails(
+                                                doc.id,
+                                                doc.data().title,
+                                                doc.data().authors,
+                                                doc.data().categories,
+                                                doc.data().pages,
+                                                doc.data().imgSrc
+                                            );
+                                        }
                                     "
+                                    :disabled="booksDetailsOpen"
                                 >
-                                    <span
-                                        class="text-center mt-3 text-white lead"
-                                        >Missing Book Cover</span
+                                    <img
+                                        v-if="doc.data().imgSrc"
+                                        :src="doc.data().imgSrc"
+                                        style="
+                                            width: 100px;
+                                            height: 160px;
+                                            background-color: #737163;
+                                        "
+                                        class="border border-dark"
+                                        alt="Book Cover"
+                                    />
+                                    <div
+                                        v-else
+                                        class="border border-dark d-flex"
+                                        style="
+                                            width: 100px;
+                                            height: 160px;
+                                            background-color: #737163;
+                                        "
                                     >
-                                </div>
+                                        <span
+                                            class="text-center mt-3 text-white lead"
+                                            >Missing Book Cover</span
+                                        >
+                                    </div>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -166,7 +229,7 @@ onMounted(async () => {
                     tabindex="0"
                 >
                     <div class="card-body pt-0" id="favBookCard">
-                        <div class="row g-4 mx-3">
+                        <div class="row g-4 mb-2">
                             <div class="col-12 text-center my-3">
                                 <span class="fs-4">To Read</span>
                             </div>
@@ -175,26 +238,46 @@ onMounted(async () => {
                                 v-for="doc in ToReadList"
                                 v-if="ToReadList"
                             >
-                                <img
-                                    v-if="doc.data().imgSrc"
-                                    :src="doc.data().imgSrc"
-                                    class="border border-dark"
-                                    alt="Book Cover"
-                                />
-                                <div
-                                    v-else
-                                    class="border border-dark d-flex"
-                                    style="
-                                        width: 130px;
-                                        height: 200px;
-                                        background-color: #737163;
+                                <button
+                                    class="my-2 d-flex btn btn-light shadow text-start"
+                                    @click="
+                                        getBookDetails(
+                                            doc.id,
+                                            doc.data().title,
+                                            doc.data().authors,
+                                            doc.data().categories,
+                                            doc.data().pages,
+                                            doc.data().imgSrc
+                                        )
                                     "
+                                    :disabled="booksDetailsOpen"
                                 >
-                                    <span
-                                        class="text-center mt-3 text-white lead"
-                                        >Missing Book Cover</span
+                                    <img
+                                        v-if="doc.data().imgSrc"
+                                        :src="doc.data().imgSrc"
+                                        style="
+                                            width: 100px;
+                                            height: 160px;
+                                            background-color: #737163;
+                                        "
+                                        class="border border-dark"
+                                        alt="Book Cover"
+                                    />
+                                    <div
+                                        v-else
+                                        class="border border-dark d-flex"
+                                        style="
+                                            width: 100px;
+                                            height: 160px;
+                                            background-color: #737163;
+                                        "
                                     >
-                                </div>
+                                        <span
+                                            class="text-center mt-3 text-white lead"
+                                            >Missing Book Cover</span
+                                        >
+                                    </div>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -207,7 +290,7 @@ onMounted(async () => {
                     tabindex="0"
                 >
                     <div class="card-body pt-0" id="favBookCard">
-                        <div class="row g-4 mx-3">
+                        <div class="row g-4 mb-2">
                             <div class="col-12 text-center my-3">
                                 <span class="fs-4">Reading</span>
                             </div>
@@ -216,26 +299,46 @@ onMounted(async () => {
                                 v-for="doc in ReadingList"
                                 v-if="ReadingList"
                             >
-                                <img
-                                    v-if="doc.data().imgSrc"
-                                    :src="doc.data().imgSrc"
-                                    class="border border-dark"
-                                    alt="Book Cover"
-                                />
-                                <div
-                                    v-else
-                                    class="border border-dark d-flex"
-                                    style="
-                                        width: 130px;
-                                        height: 200px;
-                                        background-color: #737163;
+                                <button
+                                    class="my-2 d-flex btn btn-light shadow text-start"
+                                    @click="
+                                        getBookDetails(
+                                            doc.id,
+                                            doc.data().title,
+                                            doc.data().authors,
+                                            doc.data().categories,
+                                            doc.data().pages,
+                                            doc.data().imgSrc
+                                        )
                                     "
+                                    :disabled="booksDetailsOpen"
                                 >
-                                    <span
-                                        class="text-center mt-3 text-white lead"
-                                        >Missing Book Cover</span
+                                    <img
+                                        v-if="doc.data().imgSrc"
+                                        :src="doc.data().imgSrc"
+                                        style="
+                                            width: 100px;
+                                            height: 160px;
+                                            background-color: #737163;
+                                        "
+                                        class="border border-dark"
+                                        alt="Book Cover"
+                                    />
+                                    <div
+                                        v-else
+                                        class="border border-dark d-flex"
+                                        style="
+                                            width: 100px;
+                                            height: 160px;
+                                            background-color: #737163;
+                                        "
                                     >
-                                </div>
+                                        <span
+                                            class="text-center mt-3 text-white lead"
+                                            >Missing Book Cover</span
+                                        >
+                                    </div>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -244,5 +347,3 @@ onMounted(async () => {
         </div>
     </div>
 </template>
-
-<style></style>

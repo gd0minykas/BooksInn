@@ -3,44 +3,115 @@ import { onMounted, ref } from "vue";
 import Add from "./logos/Add.vue";
 import { auth, db } from "@/firebase";
 import type { User } from "firebase/auth";
+import type { book } from "@/sharing";
 import {
     collection,
-    CollectionReference,
-    getDocs,
     limit,
+    onSnapshot,
+    orderBy,
     query,
-    where,
+    type Unsubscribe,
 } from "firebase/firestore";
+import BookDetailsModal from "./modals/BookDetailsModal.vue";
+import { Modal } from "bootstrap";
 
-// const user = ref<User | null>();
-// const readColRef = ref<CollectionReference>();
-// const toreadColRef = ref<CollectionReference>();
-// const readingColRef = ref<CollectionReference>();
-// const queryRead = ref();
-// const queryToRead = ref();
-// const queryReading = ref();
+// for details
+let chosenBook: book;
 
-// onMounted(async () => {
-//     try {
-//         await auth.authStateReady();
-//         user.value = auth.currentUser;
-//         readColRef.value = collection(db, `users/${user.value?.uid}/read`);
-//         toreadColRef.value = collection(db, `users/${user.value?.uid}/to-read`);
-//         readingColRef.value = collection(
-//             db,
-//             `users/${user.value?.uid}/reading`
-//         );
+const user = ref<User | null>();
+const ReadListLast5 = ref();
+const ToReadListLast5 = ref();
+const ReadingListLast5 = ref();
+let unsubscribeRead: Unsubscribe;
+let unsubscribeToRead: Unsubscribe;
+let unsubscribeReading: Unsubscribe;
+const booksDetailsOpen = ref<boolean>();
 
-//         // queryRead.value = await getDocs(query(readColRef.value, limit(5)));
-//         // queryToRead.value = query(toreadColRef.value, limit(5));
-//         // queryReading.value = query(readingColRef.value, limit(5));
-//     } catch (error) {
-//         console.log(error);
-//     }
-// });
+function closeModal() {
+    console.log("closed");
+    booksDetailsOpen.value = false;
+}
+
+function openModal() {
+    setTimeout(() => {
+        const modal = Modal.getOrCreateInstance("#bookDetailsModal");
+        modal.toggle();
+        modal.show();
+    }, 1);
+}
+
+function getBookDetails(
+    _id: string,
+    _title: string,
+    _authors: string[],
+    _categories: string[],
+    _pages: number,
+    _imgSrc?: string
+) {
+    chosenBook = {
+        id: _id,
+        title: _title,
+        authors: _authors,
+        categories: _categories,
+        pages: _pages,
+        imgSrc: _imgSrc,
+    };
+
+    booksDetailsOpen.value = true;
+    openModal();
+}
+
+onMounted(async () => {
+    try {
+        await auth.authStateReady();
+        user.value = auth.currentUser;
+
+        unsubscribeRead = onSnapshot(
+            query(
+                collection(db, `users/${user.value?.uid}/read`),
+                orderBy("added", "desc"),
+                limit(6)
+            ),
+            (querySnapshot) => {
+                ReadListLast5.value = querySnapshot.docs;
+            }
+        );
+
+        unsubscribeToRead = onSnapshot(
+            query(
+                collection(db, `users/${user.value?.uid}/to-read`),
+                orderBy("added", "desc"),
+                limit(6)
+            ),
+            (querySnapshot) => {
+                ToReadListLast5.value = querySnapshot.docs;
+            }
+        );
+
+        unsubscribeReading = onSnapshot(
+            query(
+                collection(db, `users/${user.value?.uid}/reading`),
+                orderBy("added", "desc"),
+                limit(6)
+            ),
+            (querySnapshot) => {
+                ReadingListLast5.value = querySnapshot.docs;
+            }
+        );
+
+        // unsubscribe need
+    } catch (error) {
+        console.log(error);
+    }
+});
 </script>
 
 <template>
+    <BookDetailsModal
+        v-if="booksDetailsOpen"
+        :book="chosenBook"
+        @hide-modal="closeModal()"
+    />
     <div class="row g-5" style="max-width: 56.25rem">
         <!-- Second Section -->
         <div class="col-6">
@@ -118,11 +189,172 @@ import {
                     <hr class="mx-5" />
                 </div>
                 <div class="card-body" id="booksCard" style="min-height: 30rem">
-                    <div class="d-flex justify-content-center">
-                        <div class="align-self-center">
-                            <!-- <div class="mb-2" v-for="doc in queryRead">
-                                {{ doc.title }}
-                            </div> -->
+                    <div class="row g-4 mb-2" style="min-height: 225px">
+                        <div>
+                            <span class="fs-8"
+                                >Recently added books to Read</span
+                            >
+                            <hr class="mt-0" />
+                        </div>
+                        <div class="row">
+                            <div
+                                class="col-2"
+                                v-for="doc in ReadListLast5"
+                                v-if="ReadListLast5"
+                            >
+                                <button
+                                    class="my-2 d-flex btn btn-light shadow text-start"
+                                    @click="
+                                        getBookDetails(
+                                            doc.id,
+                                            doc.data().title,
+                                            doc.data().authors,
+                                            doc.data().categories,
+                                            doc.data().pages,
+                                            doc.data().imgSrc
+                                        )
+                                    "
+                                    :disabled="booksDetailsOpen"
+                                >
+                                    <img
+                                        v-if="doc.data().imgSrc"
+                                        :src="doc.data().imgSrc"
+                                        style="
+                                            width: 100px;
+                                            height: 160px;
+                                            background-color: #737163;
+                                        "
+                                        class="border border-dark"
+                                        alt="Book Cover"
+                                    />
+                                    <div
+                                        v-else
+                                        class="border border-dark d-flex"
+                                        style="
+                                            width: 100px;
+                                            height: 160px;
+                                            background-color: #737163;
+                                        "
+                                    >
+                                        <span
+                                            class="text-center mt-3 text-white lead"
+                                            >Missing Book Cover</span
+                                        >
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-4 mb-2" style="min-height: 225px">
+                        <div>
+                            <span class="fs-8"
+                                >Recently added books to To Read</span
+                            >
+                            <hr class="mt-0" />
+                        </div>
+                        <div class="row">
+                            <div
+                                class="col-2"
+                                v-for="doc in ToReadListLast5"
+                                v-if="ToReadListLast5"
+                            >
+                                <button
+                                    class="my-2 d-flex btn btn-light shadow text-start"
+                                    @click="
+                                        getBookDetails(
+                                            doc.id,
+                                            doc.data().title,
+                                            doc.data().authors,
+                                            doc.data().categories,
+                                            doc.data().pages,
+                                            doc.data().imgSrc
+                                        )
+                                    "
+                                    :disabled="booksDetailsOpen"
+                                >
+                                    <img
+                                        v-if="doc.data().imgSrc"
+                                        :src="doc.data().imgSrc"
+                                        style="
+                                            width: 100px;
+                                            height: 160px;
+                                            background-color: #737163;
+                                        "
+                                        class="border border-dark"
+                                        alt="Book Cover"
+                                    />
+                                    <div
+                                        v-else
+                                        class="border border-dark d-flex"
+                                        style="
+                                            width: 100px;
+                                            height: 160px;
+                                            background-color: #737163;
+                                        "
+                                    >
+                                        <span
+                                            class="text-center mt-3 text-white lead"
+                                            >Missing Book Cover</span
+                                        >
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-4 mb-2" style="min-height: 225px">
+                        <div>
+                            <span class="fs-8"
+                                >Recently added books to Reading</span
+                            >
+                            <hr class="mt-0" />
+                        </div>
+                        <div class="row">
+                            <div
+                                class="col-2"
+                                v-for="doc in ReadingListLast5"
+                                v-if="ReadingListLast5"
+                            >
+                                <button
+                                    class="my-2 d-flex btn btn-light shadow text-start"
+                                    @click="
+                                        getBookDetails(
+                                            doc.id,
+                                            doc.data().title,
+                                            doc.data().authors,
+                                            doc.data().categories,
+                                            doc.data().pages,
+                                            doc.data().imgSrc
+                                        )
+                                    "
+                                    :disabled="booksDetailsOpen"
+                                >
+                                    <img
+                                        v-if="doc.data().imgSrc"
+                                        :src="doc.data().imgSrc"
+                                        style="
+                                            width: 100px;
+                                            height: 160px;
+                                            background-color: #737163;
+                                        "
+                                        class="border border-dark"
+                                        alt="Book Cover"
+                                    />
+                                    <div
+                                        v-else
+                                        class="border border-dark d-flex"
+                                        style="
+                                            width: 100px;
+                                            height: 160px;
+                                            background-color: #737163;
+                                        "
+                                    >
+                                        <span
+                                            class="text-center mt-3 text-white lead"
+                                            >Missing Book Cover</span
+                                        >
+                                    </div>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
