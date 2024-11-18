@@ -1,4 +1,5 @@
 import {
+    deleteDoc,
     doc,
     getDoc,
     serverTimestamp,
@@ -21,6 +22,16 @@ export function getPrettyCategory(category: string) {
         case "reading":
             return "Reading";
     }
+}
+
+export interface reviewBook {
+    id: string;
+    title: string;
+    authors: string[];
+    review?: string;
+    imgSrc?: string;
+    imgSrcSmall?: string;
+    rating?: number;
 }
 
 export interface favBook {
@@ -51,6 +62,62 @@ export interface newBook {
     pages: number;
     imgSrc?: string;
     imgSrcSmall?: string;
+}
+
+export async function removeReview(book: reviewBook) {
+    const user = ref<User | null>(auth.currentUser);
+    if (user.value) {
+        try {
+            await deleteDoc(
+                doc(db, `users/${auth.currentUser?.uid}/reviews`, book.id)
+            );
+            toast(`${book.title} Book Review was deleted successfully!`, {
+                autoClose: 5000,
+                type: "success",
+                theme: "colored",
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+export async function addReview(data: reviewBook) {
+    const user = ref<User | null>(auth.currentUser);
+    if (user.value) {
+        try {
+            const docRef = doc(db, "users", user.value.uid, "reviews", data.id);
+            const docSnap = await getDoc(docRef);
+            if (!docSnap.exists()) {
+                await setDoc(docRef, {
+                    title: data.title,
+                    authors: data.authors,
+                    imgSrc: data.imgSrc ? data.imgSrc : null,
+                    imgSrcSmall: data.imgSrcSmall ? data.imgSrcSmall : null,
+                    review: data.review ? data.review : "",
+                    rating: data.rating ? data.rating : 0,
+                    added: serverTimestamp(),
+                });
+                toast(`Review of ${data.title} was added successfully!`, {
+                    autoClose: 5000,
+                    type: "success",
+                    theme: "colored",
+                });
+                return 1;
+            } else {
+                toast(`This book already has a review`, {
+                    autoClose: 5000,
+                    type: "info",
+                    theme: "colored",
+                });
+                return 0;
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    } else {
+        console.log(user.value);
+    }
 }
 
 export async function removeFavBook() {

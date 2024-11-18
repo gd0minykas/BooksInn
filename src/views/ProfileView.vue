@@ -23,6 +23,7 @@ import { FirebaseError } from "firebase/app";
 import { generateFirebaseAuthErrorMessage } from "@/errorHandler";
 import { toast } from "vue3-toastify";
 import ReadBookListModal from "@/components/modals/ReadBookListModal.vue";
+import BookReviewModal from "@/components/modals/BookReviewModal.vue";
 
 const user = ref<User | null>();
 const editingMode = ref<boolean>();
@@ -125,6 +126,7 @@ async function saveChanges() {
 </script>
 
 <template>
+    <BookReviewModal v-if="user" />
     <ReadBookListModal v-if="user" />
     <BookSearchModal v-if="user" />
     <div class="main">

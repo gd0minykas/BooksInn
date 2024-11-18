@@ -108,6 +108,7 @@ async function addChosenBook(category: string) {
                                         data = null;
                                         searchResult = '';
                                         bookDetailsOpen = false;
+                                        bookAdded = false;
                                     }
                                 "
                             ></button>
