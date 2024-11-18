@@ -3,12 +3,10 @@ import { onMounted, ref } from "vue";
 import Add from "./logos/Add.vue";
 import { auth, db } from "@/firebase";
 import type { User } from "firebase/auth";
-import type { book } from "@/sharing";
+import { removeFavBook, type book } from "@/sharing";
 import {
     collection,
     doc,
-    DocumentSnapshot,
-    getDoc,
     limit,
     onSnapshot,
     orderBy,
@@ -17,6 +15,7 @@ import {
 } from "firebase/firestore";
 import BookDetailsModal from "./modals/BookDetailsModal.vue";
 import { Modal } from "bootstrap";
+import Minus from "./logos/Minus.vue";
 
 // for details
 let chosenBook: book;
@@ -31,7 +30,6 @@ let unsubscribeRead: Unsubscribe;
 let unsubscribeToRead: Unsubscribe;
 let unsubscribeReading: Unsubscribe;
 const booksDetailsOpen = ref<boolean>();
-const userDoc = ref<DocumentSnapshot>();
 
 function closeModal() {
     const modal = Modal.getOrCreateInstance("#bookDetailsModal");
@@ -81,7 +79,6 @@ onMounted(async () => {
             doc(db, "users", user.value?.uid!),
             (querySnapshot) => {
                 UserRef.value = querySnapshot;
-                console.log(UserRef.value.data().favBook);
             }
         );
 
@@ -166,7 +163,16 @@ onMounted(async () => {
                 <div class="card-title">
                     <div class="mx-5 d-flex justify-content-between my-3">
                         <span class="fs-3">Favourite Book</span>
-                        <div>
+                        <div v-if="UserRef?.data()?.favBook">
+                            <a
+                                href="#"
+                                class="link-dark"
+                                @click="removeFavBook()"
+                            >
+                                <Minus />
+                            </a>
+                        </div>
+                        <div v-else>
                             <a
                                 href="#"
                                 class="link-dark"
@@ -183,7 +189,10 @@ onMounted(async () => {
                     id="favBookCard"
                     style="min-height: 15rem"
                 >
-                    <div class="row mx-3" v-if="UserRef?.data()?.favBook">
+                    <div
+                        class="row mx-3"
+                        v-if="UserRef?.data()?.favBook != null"
+                    >
                         <div class="col-4">
                             <div class="d-flex justify-content-center m-3">
                                 <img
@@ -264,11 +273,8 @@ onMounted(async () => {
                 </div>
                 <div class="card-body" id="booksCard" style="min-height: 30rem">
                     <div class="row g-4 mb-2" style="min-height: 225px">
-                        <div>
-                            <span class="fs-8"
-                                >Recently added books to Read</span
-                            >
-                            <hr class="mt-0" />
+                        <div class="d-flex justify-content-center">
+                            <span class="fw-lighter">Read Books</span>
                         </div>
                         <div class="row">
                             <div
@@ -322,11 +328,8 @@ onMounted(async () => {
                         </div>
                     </div>
                     <div class="row g-4 mb-2" style="min-height: 225px">
-                        <div>
-                            <span class="fs-8"
-                                >Recently added books to To Read</span
-                            >
-                            <hr class="mt-0" />
+                        <div class="d-flex justify-content-center">
+                            <span class="fw-lighter">Books To Read</span>
                         </div>
                         <div class="row">
                             <div
@@ -380,11 +383,8 @@ onMounted(async () => {
                         </div>
                     </div>
                     <div class="row g-4 mb-2" style="min-height: 225px">
-                        <div>
-                            <span class="fs-8"
-                                >Recently added books to Reading</span
-                            >
-                            <hr class="mt-0" />
+                        <div class="d-flex justify-content-center">
+                            <span class="fw-lighter">Reading Books</span>
                         </div>
                         <div class="row">
                             <div

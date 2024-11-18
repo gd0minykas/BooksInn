@@ -8,6 +8,7 @@ const data = ref();
 const searchResult = ref<string>();
 const loadingSearch = ref<boolean>(false);
 const bookDetailsOpen = ref<boolean>(false);
+const bookAdded = ref<boolean>(false);
 
 // for details
 let chosenNewBook: newBook;
@@ -63,7 +64,12 @@ async function addChosenBook(category: string) {
             imgSrc: chosenNewBook.imgSrc,
             imgSrcSmall: chosenNewBook.imgSrcSmall,
         };
-        const result = await addBook(book, category);
+        try {
+            const result = await addBook(book, category);
+            bookAdded.value = true;
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 
@@ -140,7 +146,11 @@ async function addChosenBook(category: string) {
                                     <button
                                         class="nav-link link-warning"
                                         @click="
-                                            bookDetailsOpen = !bookDetailsOpen
+                                            () => {
+                                                bookDetailsOpen =
+                                                    !bookDetailsOpen;
+                                                bookAdded = false;
+                                            }
                                         "
                                     >
                                         <Back />
@@ -223,6 +233,7 @@ async function addChosenBook(category: string) {
                                                 type="submit"
                                                 class="btn btn-warning"
                                                 @click="addChosenBook('read')"
+                                                :disabled="bookAdded"
                                             >
                                                 Read
                                             </button>
@@ -232,6 +243,7 @@ async function addChosenBook(category: string) {
                                                 @click="
                                                     addChosenBook('to-read')
                                                 "
+                                                :disabled="bookAdded"
                                             >
                                                 To Read
                                             </button>
@@ -241,6 +253,7 @@ async function addChosenBook(category: string) {
                                                 @click="
                                                     addChosenBook('reading')
                                                 "
+                                                :disabled="bookAdded"
                                             >
                                                 Reading
                                             </button>
@@ -255,7 +268,10 @@ async function addChosenBook(category: string) {
                                 class="d-flex flex-column"
                             >
                                 <button
-                                    v-if="items.volumeInfo.printType == 'BOOK'"
+                                    v-if="
+                                        items.volumeInfo.printType == 'BOOK' &&
+                                        items.volumeInfo.pageCount > 0
+                                    "
                                     class="my-2 d-flex btn btn-light shadow text-start"
                                     @click="
                                         getBookDetails(

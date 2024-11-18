@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { auth, db } from "@/firebase";
-import { addBook, getPrettyCategory, type book } from "@/sharing";
+import { addBook, type book } from "@/sharing";
 import { deleteDoc, doc } from "firebase/firestore";
 import { toast } from "vue3-toastify";
 const props = defineProps<{

@@ -10,7 +10,13 @@ import Books from "@/components/Books.vue";
 import Reviews from "@/components/Reviews.vue";
 import BookSearchModal from "@/components/modals/BookSearchModal.vue";
 import { auth, db, avatarsList } from "@/firebase";
-import { doc, DocumentSnapshot, getDoc, updateDoc } from "firebase/firestore";
+import {
+    doc,
+    DocumentSnapshot,
+    getDoc,
+    serverTimestamp,
+    updateDoc,
+} from "firebase/firestore";
 import { updateProfile, type User } from "firebase/auth";
 import router from "@/router";
 import { FirebaseError } from "firebase/app";
@@ -85,7 +91,7 @@ async function saveChanges() {
                     Name: displayedName.value,
                     AvatarIndex: index.value,
                     isNew: false,
-                    updated: new Date().toUTCString(),
+                    updated: serverTimestamp(),
                 });
                 router.push("/");
                 editingMode.value = !editingMode.value;
@@ -107,21 +113,20 @@ async function saveChanges() {
 }
 
 /* TODO:
- * add favourite book from Read books list
  * Write a review for a book from Read books lists
  * If added to read, add pages to the xp, xp devided by 1000 is the level.
  * Reward.ts handling the level up (if xp > 1000 => lvl1, 2000 => lvl2). Add revards to the used document subdocs achievements, titles, avatars?
  * MAIN PART DONE
  *
  * Anonymous user profile viewing by id of the user. Pref username.
- * user Email validation
+ * user Email validation.
  * Avatar picture component.
  */
 </script>
 
 <template>
     <ReadBookListModal v-if="user" />
-    <BookSearchModal />
+    <BookSearchModal v-if="user" />
     <div class="main">
         <div id="banner">
             <NavBar />

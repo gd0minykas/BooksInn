@@ -53,6 +53,16 @@ export interface newBook {
     imgSrcSmall?: string;
 }
 
+export async function removeFavBook() {
+    const user = ref<User | null>(auth.currentUser);
+    if (user.value) {
+        await updateDoc(doc(db, "users", user.value.uid), {
+            favBook: null,
+            updated: serverTimestamp(),
+        });
+    }
+}
+
 export async function addFavBook(book: favBook) {
     const user = ref<User | null>(auth.currentUser);
     if (user.value) {
