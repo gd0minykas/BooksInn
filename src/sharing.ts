@@ -72,7 +72,7 @@ export async function removeReview(book: reviewBook) {
                 doc(db, `users/${auth.currentUser?.uid}/reviews`, book.id)
             );
             toast(`${book.title} Book Review was deleted successfully!`, {
-                autoClose: 5000,
+                autoClose: 3000,
                 type: "success",
                 theme: "colored",
             });
@@ -99,14 +99,14 @@ export async function addReview(data: reviewBook) {
                     added: serverTimestamp(),
                 });
                 toast(`Review of ${data.title} was added successfully!`, {
-                    autoClose: 5000,
+                    autoClose: 3000,
                     type: "success",
                     theme: "colored",
                 });
                 return 1;
             } else {
                 toast(`This book already has a review`, {
-                    autoClose: 5000,
+                    autoClose: 3000,
                     type: "info",
                     theme: "colored",
                 });
@@ -153,6 +153,8 @@ export async function addBook(data: book, category: string) {
     if (user.value) {
         try {
             const docRef = doc(db, "users", user.value.uid, category, data.id);
+            const userDocRef = doc(db, "users", user.value.uid);
+            const userDocSnap = await getDoc(userDocRef);
             const docSnap = await getDoc(docRef);
             if (!docSnap.exists()) {
                 await setDoc(docRef, {
@@ -168,11 +170,26 @@ export async function addBook(data: book, category: string) {
                 toast(
                     `${data.title} was added to ${prettyCategory} category successfully!`,
                     {
-                        autoClose: 5000,
+                        autoClose: 3000,
                         type: "success",
                         theme: "colored",
                     }
                 );
+
+                if (category == "read") {
+                    try {
+                        let expTemp: number = userDocSnap?.data()?.Exp;
+                        expTemp += data.pages;
+                        console.log("new exp", expTemp);
+                        await updateDoc(userDocRef, {
+                            Exp: expTemp,
+                            updated: serverTimestamp(),
+                        });
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+
                 return 1;
                 /*
                     Add xp if category is read.
@@ -182,7 +199,7 @@ export async function addBook(data: book, category: string) {
                 toast(
                     `This book already exists on ${prettyCategory} category`,
                     {
-                        autoClose: 5000,
+                        autoClose: 3000,
                         type: "info",
                         theme: "colored",
                     }

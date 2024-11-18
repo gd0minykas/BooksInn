@@ -2,7 +2,6 @@
 import { onMounted, ref, watch } from "vue";
 import NavBar from "@/components/navigations/NavBar.vue";
 import Spinner1 from "@/components/Spinner1.vue";
-// import FooterBar from "@/components/navigations/Footer.vue";
 import LeftArrow from "@/components/inputs/icons/LeftArrow.vue";
 import RightArrow from "@/components/inputs/icons/RightArrow.vue";
 import Home from "@/components/Home.vue";
@@ -14,8 +13,10 @@ import {
     doc,
     DocumentSnapshot,
     getDoc,
+    onSnapshot,
     serverTimestamp,
     updateDoc,
+    type Unsubscribe,
 } from "firebase/firestore";
 import { updateProfile, type User } from "firebase/auth";
 import router from "@/router";
@@ -30,8 +31,13 @@ const editingMode = ref<boolean>();
 // from db
 const isNew = ref<boolean>();
 const index = ref<number>(0);
+const level = ref<number>();
+const procentageLevel = ref<number>();
 const userDoc = ref<DocumentSnapshot>();
+const UserRef = ref();
 const displayedName = ref<string | undefined>();
+let unsubscribeUser: Unsubscribe;
+const levelbar = ref();
 
 const loading = ref<boolean>(false);
 const loadingForm = ref<boolean>(false);
@@ -52,10 +58,20 @@ onMounted(async () => {
     try {
         await auth.authStateReady();
         user.value = auth.currentUser;
-        userDoc.value = await getDoc(doc(db, "users", user.value?.uid!));
-        isNew.value = await userDoc.value?.data()?.isNew;
-        index.value = await userDoc.value?.data()?.AvatarIndex;
-        displayedName.value = await userDoc.value?.data()?.Name;
+        if (user.value) {
+            userDoc.value = await getDoc(doc(db, "users", user.value?.uid!));
+            if (userDoc.value != undefined) {
+                index.value = userDoc.value?.data()?.AvatarIndex;
+                level.value = Math.trunc(userDoc.value?.data()?.Exp / 1000);
+                displayedName.value = userDoc.value?.data()?.Name;
+                isNew.value = await userDoc.value?.data()?.isNew;
+                procentageLevel.value =
+                    ((userDoc.value?.data()?.Exp - level.value * 1000) * 100) /
+                    1000;
+                levelbar.value = document.getElementById("levelBar");
+            }
+        }
+
         if (isNew.value) {
             router.push("/user-creation");
         }
@@ -114,9 +130,9 @@ async function saveChanges() {
 }
 
 /* TODO:
- * Write a review for a book from Read books lists
- * If added to read, add pages to the xp, xp devided by 1000 is the level.
- * Reward.ts handling the level up (if xp > 1000 => lvl1, 2000 => lvl2). Add revards to the used document subdocs achievements, titles, avatars?
+ * Reactive profileView.
+ * DELETE User. User isNewUserView like myAccount. Display email, when added, when updated and delete with confirmation.
+ * Add revards to the used document subdocs achievements, titles, avatars?
  * MAIN PART DONE
  *
  * Anonymous user profile viewing by id of the user. Pref username.
@@ -219,24 +235,36 @@ async function saveChanges() {
                                 </div>
                             </div>
                             <div class="d-flex align-self-end row">
-                                <div class="mt-4">
-                                    <span class="fs-3">Profile Level</span>
+                                <div class="mb-1">
+                                    <span class="fs-5">Profile Level</span>
                                     <div>
-                                        <span class="fs-8">Level: {{ 1 }}</span>
+                                        <span class="fs-8"
+                                            >Lvl: {{ level ? level : 0 }}</span
+                                        >
                                     </div>
                                     <div>
-                                        <div
+                                        <span class="fs-8"
+                                            >Till' Next Lvl:
+                                            {{
+                                                procentageLevel
+                                                    ? procentageLevel
+                                                    : 0
+                                            }}%</span
+                                        >
+                                        <!-- <div
+                                            v-if="userDoc"
                                             class="progress border border-dark mt-1"
                                         >
                                             <div
                                                 class="progress-bar bg-warning text-dark"
                                                 role="progressbar"
-                                                style="width: 1%"
-                                                aria-valuenow="1"
-                                                aria-valuemin="0"
+                                                id="levelBar"
+                                                style="width: 0%"
+                                                aria-valuenow="0"
+                                                aria-valuemin="1"
                                                 aria-valuemax="100"
                                             ></div>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -356,7 +384,6 @@ async function saveChanges() {
                     </div>
                 </div>
             </div>
-            <!-- <FooterBar v-if="!loading" /> -->
         </div>
     </div>
 </template>

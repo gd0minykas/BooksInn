@@ -77,56 +77,58 @@ onMounted(async () => {
         await auth.authStateReady();
         user.value = auth.currentUser;
 
-        unsubscribeUser = onSnapshot(
-            doc(db, "users", user.value?.uid!),
-            (querySnapshot) => {
-                UserRef.value = querySnapshot;
-            }
-        );
+        if (user.value) {
+            // unsubscribeUser = onSnapshot(
+            //     doc(db, "users", user.value?.uid!),
+            //     (querySnapshot) => {
+            //         UserRef.value = querySnapshot;
+            //     }
+            // );
 
-        unsubscribeRead = onSnapshot(
-            query(
-                collection(db, `users/${user.value?.uid}/read`),
-                orderBy("added", "desc"),
-                limit(6)
-            ),
-            (querySnapshot) => {
-                ReadListLast5.value = querySnapshot.docs;
-            }
-        );
+            unsubscribeRead = onSnapshot(
+                query(
+                    collection(db, `users/${user.value?.uid}/read`),
+                    orderBy("added", "desc"),
+                    limit(6)
+                ),
+                (querySnapshot) => {
+                    ReadListLast5.value = querySnapshot.docs;
+                }
+            );
 
-        unsubscribeToRead = onSnapshot(
-            query(
-                collection(db, `users/${user.value?.uid}/to-read`),
-                orderBy("added", "desc"),
-                limit(6)
-            ),
-            (querySnapshot) => {
-                ToReadListLast5.value = querySnapshot.docs;
-            }
-        );
+            unsubscribeToRead = onSnapshot(
+                query(
+                    collection(db, `users/${user.value?.uid}/to-read`),
+                    orderBy("added", "desc"),
+                    limit(6)
+                ),
+                (querySnapshot) => {
+                    ToReadListLast5.value = querySnapshot.docs;
+                }
+            );
 
-        unsubscribeReading = onSnapshot(
-            query(
-                collection(db, `users/${user.value?.uid}/reading`),
-                orderBy("added", "desc"),
-                limit(6)
-            ),
-            (querySnapshot) => {
-                ReadingListLast5.value = querySnapshot.docs;
-            }
-        );
+            unsubscribeReading = onSnapshot(
+                query(
+                    collection(db, `users/${user.value?.uid}/reading`),
+                    orderBy("added", "desc"),
+                    limit(6)
+                ),
+                (querySnapshot) => {
+                    ReadingListLast5.value = querySnapshot.docs;
+                }
+            );
 
-        unsubscribeReview = onSnapshot(
-            query(
-                collection(db, `users/${user.value?.uid}/reviews`),
-                orderBy("added", "desc"),
-                limit(1)
-            ),
-            (querySnapshot) => {
-                ReviewList.value = querySnapshot.docs;
-            }
-        );
+            unsubscribeReview = onSnapshot(
+                query(
+                    collection(db, `users/${user.value?.uid}/reviews`),
+                    orderBy("added", "desc"),
+                    limit(1)
+                ),
+                (querySnapshot) => {
+                    ReviewList.value = querySnapshot.docs;
+                }
+            );
+        }
 
         // unsubscribe need
     } catch (error) {
