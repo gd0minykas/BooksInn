@@ -13,7 +13,6 @@ import {
     doc,
     DocumentSnapshot,
     getDoc,
-    onSnapshot,
     serverTimestamp,
     updateDoc,
     type Unsubscribe,
@@ -31,13 +30,8 @@ const editingMode = ref<boolean>();
 // from db
 const isNew = ref<boolean>();
 const index = ref<number>(0);
-const level = ref<number>();
-const procentageLevel = ref<number>();
 const userDoc = ref<DocumentSnapshot>();
-const UserRef = ref();
 const displayedName = ref<string | undefined>();
-let unsubscribeUser: Unsubscribe;
-const levelbar = ref();
 
 const loading = ref<boolean>(false);
 const loadingForm = ref<boolean>(false);
@@ -62,13 +56,8 @@ onMounted(async () => {
             userDoc.value = await getDoc(doc(db, "users", user.value?.uid!));
             if (userDoc.value != undefined) {
                 index.value = userDoc.value?.data()?.AvatarIndex;
-                level.value = Math.trunc(userDoc.value?.data()?.Exp / 1000);
                 displayedName.value = userDoc.value?.data()?.Name;
                 isNew.value = await userDoc.value?.data()?.isNew;
-                procentageLevel.value =
-                    ((userDoc.value?.data()?.Exp - level.value * 1000) * 100) /
-                    1000;
-                levelbar.value = document.getElementById("levelBar");
             }
         }
 
@@ -130,9 +119,8 @@ async function saveChanges() {
 }
 
 /* TODO:
- * Reactive profileView.
  * DELETE User. User isNewUserView like myAccount. Display email, when added, when updated and delete with confirmation.
- * Add revards to the used document subdocs achievements, titles, avatars?
+ * Add rewards to the used document subdocs achievements, titles, avatars?
  * MAIN PART DONE
  *
  * Anonymous user profile viewing by id of the user. Pref username.
@@ -234,7 +222,7 @@ async function saveChanges() {
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex align-self-end row">
+                            <!-- <div class="d-flex align-self-end row">
                                 <div class="mb-1">
                                     <span class="fs-5">Profile Level</span>
                                     <div>
@@ -251,7 +239,7 @@ async function saveChanges() {
                                                     : 0
                                             }}%</span
                                         >
-                                        <!-- <div
+                                        <div
                                             v-if="userDoc"
                                             class="progress border border-dark mt-1"
                                         >
@@ -264,10 +252,10 @@ async function saveChanges() {
                                                 aria-valuemin="1"
                                                 aria-valuemax="100"
                                             ></div>
-                                        </div> -->
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="d-flex align-self-end">
                                 <div class="mt-5">
                                     <div class="d-flex flex-column">

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import Add from "./logos/Add.vue";
 import { auth, db } from "@/firebase";
 import type { User } from "firebase/auth";
@@ -16,6 +16,7 @@ import {
 import BookDetailsModal from "./modals/BookDetailsModal.vue";
 import { Modal } from "bootstrap";
 import Minus from "./logos/Minus.vue";
+import Edit from "./logos/Edit.vue";
 
 // for details
 let chosenBook: book;
@@ -32,6 +33,10 @@ let unsubscribeToRead: Unsubscribe;
 let unsubscribeReading: Unsubscribe;
 let unsubscribeReview: Unsubscribe;
 const booksDetailsOpen = ref<boolean>();
+let procentageLevel: number;
+let remainingToLevel: number;
+let level: number;
+let levelInK: number;
 
 function closeModal() {
     const modal = Modal.getOrCreateInstance("#bookDetailsModal");
@@ -78,12 +83,12 @@ onMounted(async () => {
         user.value = auth.currentUser;
 
         if (user.value) {
-            // unsubscribeUser = onSnapshot(
-            //     doc(db, "users", user.value?.uid!),
-            //     (querySnapshot) => {
-            //         UserRef.value = querySnapshot;
-            //     }
-            // );
+            unsubscribeUser = onSnapshot(
+                doc(db, "users", user.value?.uid!),
+                (querySnapshot) => {
+                    UserRef.value = querySnapshot;
+                }
+            );
 
             unsubscribeRead = onSnapshot(
                 query(
@@ -135,6 +140,13 @@ onMounted(async () => {
         console.log(error);
     }
 });
+
+watch(UserRef, () => {
+    level = Math.trunc(UserRef.value?.data()?.Exp / 1000);
+    levelInK = level * 1000;
+    remainingToLevel = UserRef.value?.data()?.Exp - levelInK;
+    procentageLevel = (remainingToLevel * 100) / 1000;
+});
 </script>
 
 <template>
@@ -149,13 +161,13 @@ onMounted(async () => {
             <div id="cards" class="card rounded-4">
                 <div class="card-title">
                     <div class="mx-5 d-flex justify-content-between my-3">
-                        <span class="fs-3">Achievements</span>
+                        <span class="fs-3">Stats</span>
                         <div>
                             <a
                                 href="#"
                                 class="link-dark"
                                 @click="() => console.log('add')"
-                                ><Add
+                                ><Edit
                             /></a>
                         </div>
                     </div>
@@ -167,7 +179,20 @@ onMounted(async () => {
                     style="min-height: 15rem"
                 >
                     <div class="d-flex justify-content-center">
-                        <div class=""></div>
+                        <div class="">
+                            <div class="mb-1">
+                                <span class="fs-5">Profile Level</span>
+                                <div v-if="level">
+                                    <span class="fs-8">Lvl: {{ level }}</span>
+                                </div>
+                                <div>
+                                    <span class="fs-8"
+                                        >Till' Next Lvl:
+                                        {{ procentageLevel }}%</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -289,7 +314,10 @@ onMounted(async () => {
                 <div class="card-body" id="booksCard">
                     <div class="row g-4 mb-2">
                         <div class="d-flex justify-content-center">
-                            <span class="fw-lighter mb-3">Read Books</span>
+                            <span
+                                class="fw-lighter text-decoration-underline mb-3"
+                                >Read Books</span
+                            >
                         </div>
                         <div class="row">
                             <div
@@ -344,7 +372,10 @@ onMounted(async () => {
                     </div>
                     <div class="row g-4 mb-2">
                         <div class="d-flex justify-content-center">
-                            <span class="fw-lighter mb-3">Books To Read</span>
+                            <span
+                                class="fw-lighter text-decoration-underline mb-3"
+                                >Books To Read</span
+                            >
                         </div>
                         <div class="row">
                             <div
@@ -399,7 +430,10 @@ onMounted(async () => {
                     </div>
                     <div class="row g-4 mb-2">
                         <div class="d-flex justify-content-center">
-                            <span class="fw-lighter mb-3">Reading Books</span>
+                            <span
+                                class="fw-lighter text-decoration-underline mb-3"
+                                >Reading Books</span
+                            >
                         </div>
                         <div class="row">
                             <div
