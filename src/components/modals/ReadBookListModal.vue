@@ -31,7 +31,6 @@ async function addFavouriteBook(data: any) {
         imgSrc: data.imgSrc,
         imgSrcSmall: data.imgSrcSmall,
     };
-    console.log(favouriteBook);
     try {
         await addFavBook(favouriteBook);
     } catch (error) {

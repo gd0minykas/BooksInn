@@ -112,7 +112,7 @@ onAuthStateChanged(auth, (user) => {
 async function createUserOnDb(userId: string, name: string | null | undefined) {
     await setDoc(doc(db, "users", userId), {
         Name: name,
-        Exp: 1,
+        Exp: 1000,
         isNew: true,
         created: serverTimestamp(),
         updated: null,

@@ -101,11 +101,13 @@ watch(index, () => {
             <div class="row">
                 <div class="col align-self-center">
                     <div>
-                        <span class="fs-2">Finish your account setup!</span>
+                        <span class="fs-2">This is Your account setup!</span>
                         <p class="fs-5">
                             Thank you for joining Books' inn<br />
-                            In this page you can choose an Avatar and The
-                            Displayed Name of the profile.
+                            In this page you can change an Avatar and The
+                            Displayed Name of the profile, see other information
+                            <br />
+                            or Delete Your account.
                         </p>
                     </div>
                 </div>

@@ -55,7 +55,7 @@ onMounted(async () => {
             <div class="card-body me-3" id="favBookCard">
                 <div class="row">
                     <div v-for="items in ReviewList" v-if="ReviewList">
-                        <div class="row">
+                        <div class="row mb-4">
                             <div class="col-4">
                                 <div class="d-flex justify-content-center">
                                     <img

@@ -162,7 +162,7 @@ onMounted(async () => {
                 <hr class="mx-5" />
             </div>
 
-            <div class="tab-content" style="min-height: 40vh" id="myTabContent">
+            <div class="tab-content" id="myTabContent">
                 <div
                     class="tab-pane fade show active"
                     id="read-tab-pane"
@@ -171,7 +171,7 @@ onMounted(async () => {
                     tabindex="0"
                 >
                     <div class="card-body pt-0" id="favBookCard">
-                        <div class="row g-4 mb-2">
+                        <div class="row g-4 mx-3 mb-3">
                             <div class="col-12 text-center my-3">
                                 <span class="fs-4">Read</span>
                             </div>
@@ -236,7 +236,7 @@ onMounted(async () => {
                     tabindex="0"
                 >
                     <div class="card-body pt-0" id="favBookCard">
-                        <div class="row g-4 mb-2">
+                        <div class="row g-4 mx-3 mb-3">
                             <div class="col-12 text-center my-3">
                                 <span class="fs-4">To Read</span>
                             </div>
@@ -299,7 +299,7 @@ onMounted(async () => {
                     tabindex="0"
                 >
                     <div class="card-body pt-0" id="favBookCard">
-                        <div class="row g-4 mb-2">
+                        <div class="row g-4 mx-3 mb-3">
                             <div class="col-12 text-center my-3">
                                 <span class="fs-4">Reading</span>
                             </div>

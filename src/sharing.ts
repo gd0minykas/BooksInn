@@ -180,7 +180,6 @@ export async function addBook(data: book, category: string) {
                     try {
                         let expTemp: number = userDocSnap?.data()?.Exp;
                         expTemp += data.pages;
-                        console.log("new exp", expTemp);
                         await updateDoc(userDocRef, {
                             Exp: expTemp,
                             updated: serverTimestamp(),

@@ -178,20 +178,46 @@ watch(UserRef, () => {
                     id="achiementsCard"
                     style="min-height: 15rem"
                 >
-                    <div class="d-flex justify-content-center">
-                        <div class="">
-                            <div class="mb-1">
-                                <span class="fs-5">Profile Level</span>
-                                <div v-if="level">
-                                    <span class="fs-8">Lvl: {{ level }}</span>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-4 mx-5">
+                                <div class="ms-2">
+                                    <span class="fs-5">Profile Level</span>
+                                    <div v-if="level">
+                                        <span class="fs-8"
+                                            >Lvl: {{ level }}</span
+                                        >
+                                    </div>
                                 </div>
                                 <div>
-                                    <span class="fs-8"
-                                        >Till' Next Lvl:
-                                        {{ procentageLevel }}%</span
+                                    <div
+                                        class="progress mt-2 border border-dark"
+                                        role="progressbar"
+                                        aria-label="Warning example"
+                                        aria-valuenow="75"
+                                        aria-valuemin="0"
+                                        aria-valuemax="100"
                                     >
+                                        <div
+                                            class="progress-bar bg-warning text-dark"
+                                            :style="{
+                                                width: procentageLevel + '%',
+                                            }"
+                                        >
+                                            {{
+                                                Math.trunc(procentageLevel)
+                                                    ? Math.trunc(
+                                                          procentageLevel
+                                                      )
+                                                    : 0
+                                            }}%
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-12">
+                            <hr class="mt-0 mx-4" />
                         </div>
                     </div>
                 </div>
@@ -374,14 +400,14 @@ watch(UserRef, () => {
                         <div class="d-flex justify-content-center">
                             <span
                                 class="fw-lighter text-decoration-underline mb-3"
-                                >Books To Read</span
+                                >Reading Books</span
                             >
                         </div>
                         <div class="row">
                             <div
                                 class="col-2"
-                                v-for="doc in ToReadListLast5"
-                                v-if="ToReadListLast5"
+                                v-for="doc in ReadingListLast5"
+                                v-if="ReadingListLast5"
                             >
                                 <button
                                     class="my-2 d-flex btn btn-light shadow text-start"
@@ -432,14 +458,14 @@ watch(UserRef, () => {
                         <div class="d-flex justify-content-center">
                             <span
                                 class="fw-lighter text-decoration-underline mb-3"
-                                >Reading Books</span
+                                >Books To Read</span
                             >
                         </div>
                         <div class="row">
                             <div
                                 class="col-2"
-                                v-for="doc in ReadingListLast5"
-                                v-if="ReadingListLast5"
+                                v-for="doc in ToReadListLast5"
+                                v-if="ToReadListLast5"
                             >
                                 <button
                                     class="my-2 d-flex btn btn-light shadow text-start"

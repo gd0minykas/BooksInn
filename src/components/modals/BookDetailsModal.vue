@@ -178,7 +178,8 @@ async function addExistingBook(category: string) {
                                         "
                                         :disabled="
                                             props.book.currentCategory ==
-                                            'to-read'
+                                                'to-read' ||
+                                            props.book.currentCategory == 'read'
                                         "
                                     >
                                         To Read
@@ -195,7 +196,8 @@ async function addExistingBook(category: string) {
                                         "
                                         :disabled="
                                             props.book.currentCategory ==
-                                            'reading'
+                                                'reading' ||
+                                            props.book.currentCategory == 'read'
                                         "
                                     >
                                         Reading
