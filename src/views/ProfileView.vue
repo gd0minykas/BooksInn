@@ -222,40 +222,6 @@ async function saveChanges() {
                                     </div>
                                 </div>
                             </div>
-                            <!-- <div class="d-flex align-self-end row">
-                                <div class="mb-1">
-                                    <span class="fs-5">Profile Level</span>
-                                    <div>
-                                        <span class="fs-8"
-                                            >Lvl: {{ level ? level : 0 }}</span
-                                        >
-                                    </div>
-                                    <div>
-                                        <span class="fs-8"
-                                            >Till' Next Lvl:
-                                            {{
-                                                procentageLevel
-                                                    ? procentageLevel
-                                                    : 0
-                                            }}%</span
-                                        >
-                                        <div
-                                            v-if="userDoc"
-                                            class="progress border border-dark mt-1"
-                                        >
-                                            <div
-                                                class="progress-bar bg-warning text-dark"
-                                                role="progressbar"
-                                                id="levelBar"
-                                                style="width: 0%"
-                                                aria-valuenow="0"
-                                                aria-valuemin="1"
-                                                aria-valuemax="100"
-                                            ></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> -->
                             <div class="d-flex align-self-end">
                                 <div class="mt-5">
                                     <div class="d-flex flex-column">
@@ -274,7 +240,16 @@ async function saveChanges() {
                                             </button>
                                         </div>
                                         <button
-                                            class="btn btn-warning mt-3"
+                                            class="btn btn-warning mt-2"
+                                            @click="
+                                                router.push('/user-account')
+                                            "
+                                            v-if="!editingMode && !loadingForm"
+                                        >
+                                            Your Account
+                                        </button>
+                                        <button
+                                            class="btn btn-warning mt-2"
                                             @click="editingMode = !editingMode"
                                         >
                                             Edit Profile

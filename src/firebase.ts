@@ -98,7 +98,7 @@ const createdUserWithProviders = ref<UserCredential | null>();
 onAuthStateChanged(auth, (user) => {
     if (user) {
         localStorage.setItem("userIsLogedIn", "true");
-        if (router.currentRoute.value.path !== "/user-creation") {
+        if (router.currentRoute.value.path !== "/user-account") {
             router.push("/");
         }
     } else {
