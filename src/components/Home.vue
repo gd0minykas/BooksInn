@@ -27,11 +27,13 @@ const ReadListLast5 = ref();
 const ToReadListLast5 = ref();
 const ReadingListLast5 = ref();
 const ReviewList = ref();
+const AchievementsList = ref();
 let unsubscribeUser: Unsubscribe;
 let unsubscribeRead: Unsubscribe;
 let unsubscribeToRead: Unsubscribe;
 let unsubscribeReading: Unsubscribe;
 let unsubscribeReview: Unsubscribe;
+let unsubscribeAchiev: Unsubscribe;
 const booksDetailsOpen = ref<boolean>();
 let procentageLevel: number;
 let remainingToLevel: number;
@@ -133,6 +135,17 @@ onMounted(async () => {
                     ReviewList.value = querySnapshot.docs;
                 }
             );
+
+            unsubscribeAchiev = onSnapshot(
+                query(
+                    collection(db, `users/${user.value?.uid}/achievements`),
+                    orderBy("added", "asc")
+                ),
+                (querySnapshot) => {
+                    AchievementsList.value = querySnapshot.docs;
+                    console.log(AchievementsList.value);
+                }
+            );
         }
 
         // unsubscribe need
@@ -218,6 +231,30 @@ watch(UserRef, () => {
                         </div>
                         <div class="col-12">
                             <hr class="mt-0 mx-4" />
+                            <!-- achievements -->
+                            <div
+                                class="d-flex justify-content-evenly"
+                                v-if="AchievementsList"
+                            >
+                                <div
+                                    class="d-flex flex-column"
+                                    v-for="achievement in AchievementsList"
+                                >
+                                    <img
+                                        :src="achievement?.data()?.IconUrl"
+                                        class="border shadow align-self-center"
+                                        style="
+                                            width: 50px;
+                                            height: 50px;
+                                            background-color: #737163;
+                                        "
+                                        alt="Achievements Cover"
+                                    />
+                                    <span class="fs-6 mt-1 fst-italic">{{
+                                        achievement?.data()?.title
+                                    }}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

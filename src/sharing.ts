@@ -191,7 +191,7 @@ export async function addBook(data: book, category: string) {
                             Math.floor(expCurrent / 1000)
                         ) {
                             expPrevious = expCurrent;
-                            levelUp(Math.floor(expCurrent / 1000));
+                            await levelUp(Math.floor(expCurrent / 1000));
                         }
                     } catch (error) {
                         console.log(error);

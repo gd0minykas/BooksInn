@@ -10,9 +10,13 @@ import Reviews from "@/components/Reviews.vue";
 import BookSearchModal from "@/components/modals/BookSearchModal.vue";
 import { auth, db, avatarsList } from "@/firebase";
 import {
+    collection,
     doc,
     DocumentSnapshot,
     getDoc,
+    onSnapshot,
+    orderBy,
+    query,
     serverTimestamp,
     updateDoc,
     type Unsubscribe,
@@ -33,6 +37,9 @@ const index = ref<number>(0);
 const userDoc = ref<DocumentSnapshot>();
 const displayedName = ref<string | undefined>();
 const displayedTitle = ref<string | undefined>();
+const newDisplayedTitle = ref<string>();
+let unsubscribeTitles: Unsubscribe;
+const TitlesList = ref();
 
 const loading = ref<boolean>(false);
 const loadingForm = ref<boolean>(false);
@@ -61,7 +68,17 @@ onMounted(async () => {
                 isNew.value = await userDoc.value?.data()?.isNew;
                 displayedTitle.value = await userDoc.value?.data()
                     ?.CurrentTitle;
+                newDisplayedTitle.value = displayedTitle.value;
             }
+            unsubscribeTitles = onSnapshot(
+                query(
+                    collection(db, `users/${user.value?.uid}/titles`),
+                    orderBy("added", "asc")
+                ),
+                (querySnapshot) => {
+                    TitlesList.value = querySnapshot.docs;
+                }
+            );
         }
 
         if (isNew.value) {
@@ -99,12 +116,14 @@ async function saveChanges() {
                 await updateDoc(doc(db, "users", user.value.uid), {
                     Name: displayedName.value,
                     AvatarIndex: index.value,
+                    CurrentTitle: newDisplayedTitle.value,
                     isNew: false,
                     updated: serverTimestamp(),
                 });
                 router.push("/");
                 editingMode.value = !editingMode.value;
             }
+            displayedTitle.value = newDisplayedTitle.value;
             loadingForm.value = false;
         } else {
             errorMessage.value = generateFirebaseAuthErrorMessage(
@@ -206,7 +225,17 @@ async function saveChanges() {
                                         />
                                     </div>
                                     <div class="d-flex justify-content-center">
-                                        <span class="fs-4">Novice</span>
+                                        <select
+                                            class="form-select"
+                                            v-model="newDisplayedTitle"
+                                        >
+                                            <option
+                                                v-for="title in TitlesList"
+                                                :value="title.data().title"
+                                            >
+                                                {{ title.data().title }}
+                                            </option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div v-else class="mb-2 justify-content-center">

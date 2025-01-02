@@ -85,6 +85,14 @@ const avatarsList: string[] = [
     "https://firebasestorage.googleapis.com/v0/b/booksinn-8888.firebasestorage.app/o/AvatarsWithBG%2F50.png?alt=media&token=28b61c5d-65a7-4527-9ee1-aef6cb4a1994",
 ];
 
+const achievementsIconsList: string[] = [
+    "https://firebasestorage.googleapis.com/v0/b/booksinn-8888.firebasestorage.app/o/AchievementsWithBG%2FIcons_13.png?alt=media&token=91759534-2c03-4dca-b2d6-e143beb82e76",
+    "https://firebasestorage.googleapis.com/v0/b/booksinn-8888.firebasestorage.app/o/AchievementsWithBG%2FIcons_14.png?alt=media&token=ce208aaa-1a65-43c5-9ede-e6bb93327164",
+    "https://firebasestorage.googleapis.com/v0/b/booksinn-8888.firebasestorage.app/o/AchievementsWithBG%2FIcons_15.png?alt=media&token=8b9a5a0f-b20a-488e-ad95-1a2e3f94df3c",
+    "https://firebasestorage.googleapis.com/v0/b/booksinn-8888.firebasestorage.app/o/AchievementsWithBG%2FIcons_16.png?alt=media&token=ca9bb7d2-79d5-4c0f-8b1a-29bd6bba6685",
+    "https://firebasestorage.googleapis.com/v0/b/booksinn-8888.firebasestorage.app/o/AchievementsWithBG%2FIcons_17.png?alt=media&token=731c7340-6b7c-403b-bad4-8c6b5125c815",
+];
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
@@ -120,7 +128,7 @@ async function createUserOnDb(userId: string, name: string | null | undefined) {
         updated: null,
     });
     // To create achievements and titles subcollections
-    levelUp(1);
+    await levelUp(1);
 }
 
 // Sign Ins
@@ -164,4 +172,13 @@ const provider: GoogleAuthProvider = new GoogleAuthProvider();
 provider.addScope("email");
 auth.useDeviceLanguage();
 
-export { analytics, auth, db, provider, user, storageRef, avatarsList };
+export {
+    analytics,
+    auth,
+    db,
+    provider,
+    user,
+    storageRef,
+    avatarsList,
+    achievementsIconsList,
+};
