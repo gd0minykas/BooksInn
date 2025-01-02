@@ -10,6 +10,7 @@ import { db, auth } from "./firebase";
 import type { User } from "firebase/auth";
 import { ref } from "vue";
 import { toast } from "vue3-toastify";
+import { levelUp } from "./rewards";
 
 export function getPrettyCategory(category: string) {
     switch (category) {
@@ -178,22 +179,26 @@ export async function addBook(data: book, category: string) {
 
                 if (category == "read") {
                     try {
-                        let expTemp: number = userDocSnap?.data()?.Exp;
-                        expTemp += data.pages;
+                        let expPrevious: number = userDocSnap?.data()?.Exp;
+                        let expCurrent: number = expPrevious + data.pages;
                         await updateDoc(userDocRef, {
-                            Exp: expTemp,
+                            Exp: expCurrent,
                             updated: serverTimestamp(),
                         });
+                        // IF GOES OVER k THEN CALL Level Up()
+                        if (
+                            Math.floor(expPrevious / 1000) <
+                            Math.floor(expCurrent / 1000)
+                        ) {
+                            expPrevious = expCurrent;
+                            levelUp(Math.floor(expCurrent / 1000));
+                        }
                     } catch (error) {
                         console.log(error);
                     }
                 }
 
                 return 1;
-                /*
-                    Add xp if category is read.
-                    If level up => call rewards.ts function.
-                */
             } else {
                 toast(
                     `This book already exists on ${prettyCategory} category`,

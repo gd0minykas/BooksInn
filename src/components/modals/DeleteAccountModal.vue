@@ -5,6 +5,7 @@ import { FirebaseError } from 'firebase/app';
 import { deleteUser, type User } from 'firebase/auth';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { onMounted, ref } from 'vue';
+import { toast } from 'vue3-toastify';
 
 const user = ref<User | null>();
 const errorMessage = ref<string | undefined>();
@@ -21,11 +22,20 @@ onMounted(async () => {
 
 
 async function deleteUserAccount() {
-    console.log("delete");
     if (user.value) {
         try {
             await deleteDoc(doc(db, "users", user.value?.uid));
-            await deleteUser(user.value);
+            setTimeout(async () => {
+              if(user.value) {
+                await deleteUser(user.value);
+              };
+              localStorage.removeItem("userIsLogedIn");
+            }, 3000);
+            toast("Profile data has been deleted", {
+                autoClose: 2500,
+                theme: "colored",
+                type: "warning"
+            });
         } catch (error) {
             if(error instanceof FirebaseError) [
               errorMessage.value = generateFirebaseAuthErrorMessage(error.code)
@@ -59,7 +69,7 @@ async function deleteUserAccount() {
         </div>
         <div class="modal-body">
           <p class="lead">
-            If You really want to delete your account - confirm
+            Do You really want to delete your Account?
           </p>
           <hr></hr>
           <div class="min-h-2" style="min-height: 2em">

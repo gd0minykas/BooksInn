@@ -16,6 +16,7 @@ import {
 import { ref } from "vue";
 import router from "./router";
 import { generateFirebaseAuthErrorMessage } from "./errorHandler";
+import { levelUp } from "./rewards";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -113,10 +114,13 @@ async function createUserOnDb(userId: string, name: string | null | undefined) {
     await setDoc(doc(db, "users", userId), {
         Name: name,
         Exp: 1000,
+        CurrentTitle: "",
         isNew: true,
         created: serverTimestamp(),
         updated: null,
     });
+    // To create achievements and titles subcollections
+    levelUp(1);
 }
 
 // Sign Ins

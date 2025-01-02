@@ -32,6 +32,7 @@ const isNew = ref<boolean>();
 const index = ref<number>(0);
 const userDoc = ref<DocumentSnapshot>();
 const displayedName = ref<string | undefined>();
+const displayedTitle = ref<string | undefined>();
 
 const loading = ref<boolean>(false);
 const loadingForm = ref<boolean>(false);
@@ -58,6 +59,8 @@ onMounted(async () => {
                 index.value = userDoc.value?.data()?.AvatarIndex;
                 displayedName.value = userDoc.value?.data()?.Name;
                 isNew.value = await userDoc.value?.data()?.isNew;
+                displayedTitle.value = await userDoc.value?.data()
+                    ?.CurrentTitle;
             }
         }
 
@@ -119,13 +122,11 @@ async function saveChanges() {
 }
 
 /* TODO:
- * DELETE User. User isNewUserView like myAccount. Display email, when added, when updated and delete with confirmation.
  * Add rewards to the used document subdocs achievements, titles, avatars?
+ * Responsive design
+ * Confirm password on account deletion
  * MAIN PART DONE
  *
- * Anonymous user profile viewing by id of the user. Pref username.
- * user Email validation.
- * Avatar picture component.
  */
 </script>
 
@@ -218,7 +219,11 @@ async function saveChanges() {
                                         <span v-else class="fs-2">Guest</span>
                                     </div>
                                     <div class="d-flex justify-content-center">
-                                        <span class="fs-4">Novice</span>
+                                        <span
+                                            v-if="displayedTitle"
+                                            class="fs-4"
+                                            >{{ displayedTitle }}</span
+                                        >
                                     </div>
                                 </div>
                             </div>
