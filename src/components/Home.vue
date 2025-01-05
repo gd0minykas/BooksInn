@@ -17,6 +17,7 @@ import BookDetailsModal from "./modals/BookDetailsModal.vue";
 import { Modal } from "bootstrap";
 import Minus from "./logos/Minus.vue";
 import Edit from "./logos/Edit.vue";
+import AchievementsListModal from "./modals/AchievementsListModal.vue";
 
 // for details
 let chosenBook: book;
@@ -33,7 +34,6 @@ let unsubscribeRead: Unsubscribe;
 let unsubscribeToRead: Unsubscribe;
 let unsubscribeReading: Unsubscribe;
 let unsubscribeReview: Unsubscribe;
-let unsubscribeAchiev: Unsubscribe;
 const booksDetailsOpen = ref<boolean>();
 let procentageLevel: number;
 let remainingToLevel: number;
@@ -89,6 +89,8 @@ onMounted(async () => {
                 doc(db, "users", user.value?.uid!),
                 (querySnapshot) => {
                     UserRef.value = querySnapshot;
+                    AchievementsList.value =
+                        UserRef.value.data().DisplayedAchiev;
                 }
             );
 
@@ -135,20 +137,7 @@ onMounted(async () => {
                     ReviewList.value = querySnapshot.docs;
                 }
             );
-
-            unsubscribeAchiev = onSnapshot(
-                query(
-                    collection(db, `users/${user.value?.uid}/achievements`),
-                    orderBy("added", "asc")
-                ),
-                (querySnapshot) => {
-                    AchievementsList.value = querySnapshot.docs;
-                    console.log(AchievementsList.value);
-                }
-            );
         }
-
-        // unsubscribe need
     } catch (error) {
         console.log(error);
     }
@@ -168,6 +157,7 @@ watch(UserRef, () => {
         :book="chosenBook"
         @hide-modal="closeModal()"
     />
+    <AchievementsListModal />
     <div class="row g-5" style="max-width: 56.25rem">
         <!-- Second Section -->
         <div class="col-6">
@@ -179,7 +169,8 @@ watch(UserRef, () => {
                             <a
                                 href="#"
                                 class="link-dark"
-                                @click="() => console.log('add')"
+                                data-bs-toggle="modal"
+                                data-bs-target="#achievementListModal"
                                 ><Edit
                             /></a>
                         </div>
@@ -241,7 +232,7 @@ watch(UserRef, () => {
                                     v-for="achievement in AchievementsList"
                                 >
                                     <img
-                                        :src="achievement?.data()?.IconUrl"
+                                        :src="achievement?.IconUrl"
                                         class="border shadow align-self-center"
                                         style="
                                             width: 50px;
@@ -250,9 +241,11 @@ watch(UserRef, () => {
                                         "
                                         alt="Achievements Cover"
                                     />
-                                    <span class="fs-6 mt-1 fst-italic">{{
-                                        achievement?.data()?.title
-                                    }}</span>
+                                    <span
+                                        style="max-width: 90px"
+                                        class="fs-6 mt-1 fst-italic text-center"
+                                        >{{ achievement.title }}</span
+                                    >
                                 </div>
                             </div>
                         </div>

@@ -89,7 +89,7 @@ export async function levelUp(level: number) {
                     const docAchievSnap = await getDoc(docAchievRef);
                     if (!docAchievSnap.exists() && !docTitlesSnap.exists()) {
                         await setDoc(docTitlesRef, {
-                            title: "Apprentice",
+                            title: "Student",
                             added: serverTimestamp(),
                         });
                         await setDoc(docAchievRef, {
@@ -134,7 +134,7 @@ export async function levelUp(level: number) {
                     const docAchievSnap = await getDoc(docAchievRef);
                     if (!docAchievSnap.exists() && !docTitlesSnap.exists()) {
                         await setDoc(docTitlesRef, {
-                            title: "Novice",
+                            title: "Apprentice",
                             added: serverTimestamp(),
                         });
                         await setDoc(docAchievRef, {
@@ -156,7 +156,7 @@ export async function levelUp(level: number) {
             break;
         }
 
-        case 10: {
+        case 6: {
             let levelString: string = level.toString();
             const user = ref<User | null>(auth.currentUser);
             if (user.value) {
@@ -183,7 +183,7 @@ export async function levelUp(level: number) {
                             added: serverTimestamp(),
                         });
                         await setDoc(docAchievRef, {
-                            title: "Reached Level 10",
+                            title: "Reached Level 6",
                             IconUrl: achievementsIconsList[3],
                             added: serverTimestamp(),
                         });
@@ -201,7 +201,7 @@ export async function levelUp(level: number) {
             break;
         }
 
-        case 50: {
+        case 7: {
             let levelString: string = level.toString();
             const user = ref<User | null>(auth.currentUser);
             if (user.value) {
@@ -228,7 +228,7 @@ export async function levelUp(level: number) {
                             added: serverTimestamp(),
                         });
                         await setDoc(docAchievRef, {
-                            title: "Reached Level 50",
+                            title: "Reached Level 7",
                             IconUrl: achievementsIconsList[4],
                             added: serverTimestamp(),
                         });

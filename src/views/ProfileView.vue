@@ -141,7 +141,7 @@ async function saveChanges() {
 }
 
 /* TODO:
- * Add rewards to the used document subdocs achievements, titles, avatars?
+ * Adding achievements top3, make modal footer stationary
  * Responsive design
  * Confirm password on account deletion
  * MAIN PART DONE
