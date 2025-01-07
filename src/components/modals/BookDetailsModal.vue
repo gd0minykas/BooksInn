@@ -3,6 +3,7 @@ import { auth, db } from "@/firebase";
 import { addBook, type book } from "@/sharing";
 import { deleteDoc, doc } from "firebase/firestore";
 import { toast } from "vue3-toastify";
+
 const props = defineProps<{
     book: book;
 }>();
@@ -170,24 +171,6 @@ async function addExistingBook(category: string) {
                                         type="submit"
                                         class="btn btn-warning"
                                         @click="
-                                            addExistingBook('to-read').then(
-                                                () => {
-                                                    $emit('hide-modal');
-                                                }
-                                            )
-                                        "
-                                        :disabled="
-                                            props.book.currentCategory ==
-                                                'to-read' ||
-                                            props.book.currentCategory == 'read'
-                                        "
-                                    >
-                                        To Read
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        class="btn btn-warning"
-                                        @click="
                                             addExistingBook('reading').then(
                                                 () => {
                                                     $emit('hide-modal');
@@ -201,6 +184,24 @@ async function addExistingBook(category: string) {
                                         "
                                     >
                                         Reading
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        class="btn btn-warning"
+                                        @click="
+                                            addExistingBook('to-read').then(
+                                                () => {
+                                                    $emit('hide-modal');
+                                                }
+                                            )
+                                        "
+                                        :disabled="
+                                            props.book.currentCategory ==
+                                                'to-read' ||
+                                            props.book.currentCategory == 'read'
+                                        "
+                                    >
+                                        To Read
                                     </button>
                                 </div>
                             </div>

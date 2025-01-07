@@ -141,7 +141,7 @@ async function saveChanges() {
 }
 
 /* TODO:
- * Adding achievements top3, make modal footer stationary
+ * Adding achievements. Three positions. Can add to each. Check if they are taken.
  * Responsive design
  * Confirm password on account deletion
  * MAIN PART DONE

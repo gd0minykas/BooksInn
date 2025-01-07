@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { auth, db } from "@/firebase";
+import { addAchievement, type Achievement } from "@/sharing";
 import type { User } from "firebase/auth";
 import {
     collection,
@@ -8,16 +9,33 @@ import {
     query,
     type Unsubscribe,
 } from "firebase/firestore";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref } from "vue";
+
+const props = defineProps<{
+    achievementPos: number;
+    currentAchievId: string;
+}>();
+
+let achievement: Achievement;
 
 const user = ref<User | null>();
 const AchievementsList = ref();
 let unsubscribeAchiev: Unsubscribe;
-const displayedAchievements = ref([]);
 
-watch(displayedAchievements, () => {
-    console.log(displayedAchievements);
-});
+async function addAchievementToSlot(id: string, url: string, title: string) {
+    achievement = {
+        id: id,
+        iconUrl: url,
+        title: title,
+    };
+    if (auth.currentUser?.uid) {
+        try {
+            await addAchievement(props.achievementPos, achievement);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
 
 onMounted(async () => {
     try {
@@ -59,13 +77,19 @@ onMounted(async () => {
                                 class="modal-title fs-5"
                                 id="achievementListModal Label"
                             >
-                                Achievements list:
+                                Achievements Slot Nr.
+                                {{ props.achievementPos }}:
                             </h1>
                             <button
                                 type="button"
                                 class="btn-close"
                                 data-bs-dismiss="modal"
                                 aria-label="Close"
+                                @click="
+                                    () => {
+                                        $emit('hide-modal');
+                                    }
+                                "
                             ></button>
                         </div>
                     </div>
@@ -75,89 +99,37 @@ onMounted(async () => {
                         v-for="items in AchievementsList"
                         class="d-flex flex-column"
                     >
-                        <input
-                            type="checkbox"
-                            class="btn-check"
-                            :id="items.data().id"
-                            :value="items.data().title"
-                            v-model="displayedAchievements"
-                        />
-                        <label
-                            :for="items.data().id"
-                            class="my-2 d-flex btn btn-light shadow text-start"
-                        >
-                            <div class="d-flex justify-content-center m-3">
-                                <img
-                                    v-if="items.data().IconUrl"
-                                    :src="items.data().IconUrl"
-                                    class="border border-dark"
-                                    width="80px"
-                                    height="80px"
-                                    alt="Achievement Cover"
-                                />
-                                <div
-                                    v-else
-                                    class="border border-dark d-flex"
-                                    style="
-                                        width: 80px;
-                                        height: 80px;
-                                        background-color: #737163;
-                                    "
-                                >
-                                    <span class="text-center mt-3 text-white"
-                                        >Missing Achievement Icon</span
-                                    >
-                                </div>
-                            </div>
-                            <div class="d-flex flex-column ms-4 mt-3">
-                                <div>
-                                    <span class="fs-4"
-                                        >"{{ items.data().title }}"</span
-                                    >
-                                </div>
-                                <hr class="mt-0" />
-                                <p class="mb-0">Unlocked:</p>
-                                <div>
-                                    <span class="ms-2">{{
-                                        new Intl.DateTimeFormat("en-US", {
-                                            year: "numeric",
-                                            month: "long",
-                                            day: "numeric",
-                                        }).format(items.data().added.toDate())
-                                    }}</span>
-                                </div>
-                                <div></div>
-                            </div>
-                        </label>
-                        <!-- <button
-                            class="my-2 d-flex btn btn-light shadow text-start"
+                        <button
+                            class="my-2 d-flex btn btn-light shadow text-start align-items-center"
                             @click="
                                 () => {
-                                    displayedAchievements?.push([
-                                        items.data().title,
+                                    addAchievementToSlot(
+                                        items.id,
                                         items.data().IconUrl,
-                                    ]);
-                                    console.log(displayedAchievements);
+                                        items.data().title
+                                    );
+                                    $emit('hide-modal');
                                 }
                             "
-                            data-bs-toggle="button"
-                            :disabled="displayedAchievements.length == 3"
+                            :disabled="props.currentAchievId == items.id"
                         >
-                            <div class="d-flex justify-content-center m-3">
+                            <div
+                                class="d-flex justify-content-center m-3 shadow"
+                            >
                                 <img
                                     v-if="items.data().IconUrl"
                                     :src="items.data().IconUrl"
                                     class="border border-dark"
-                                    width="80px"
-                                    height="80px"
+                                    width="60px"
+                                    height="60px"
                                     alt="Achievement Cover"
                                 />
                                 <div
                                     v-else
-                                    class="border border-dark d-flex"
+                                    class="border border-dark d-flex shadow"
                                     style="
-                                        width: 80px;
-                                        height: 80px;
+                                        width: 60px;
+                                        height: 60px;
                                         background-color: #737163;
                                     "
                                 >
@@ -172,7 +144,7 @@ onMounted(async () => {
                                         >"{{ items.data().title }}"</span
                                     >
                                 </div>
-                                <hr class="mt-0" />
+                                <hr class="m-0" />
                                 <p class="mb-0">Unlocked:</p>
                                 <div>
                                     <span class="ms-2">{{
@@ -185,35 +157,7 @@ onMounted(async () => {
                                 </div>
                                 <div></div>
                             </div>
-                        </button> -->
-                    </div>
-                    <div class="modal-footer mt-3">
-                        <div class="d-flex justify-content-between w-100">
-                            <div class="lead">
-                                {{
-                                    displayedAchievements?.length
-                                        ? displayedAchievements?.length
-                                        : "0"
-                                }}
-                            </div>
-                            <div class="d-flex gap-2">
-                                <button
-                                    type="button"
-                                    class="btn btn-secondary"
-                                    data-bs-dismiss="modal"
-                                >
-                                    Close
-                                </button>
-                                <button
-                                    type="button"
-                                    class="btn btn-warning"
-                                    @click="console.log('add')"
-                                    data-bs-dismiss="modal"
-                                >
-                                    Add
-                                </button>
-                            </div>
-                        </div>
+                        </button>
                     </div>
                 </div>
             </div>

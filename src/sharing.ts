@@ -25,6 +25,12 @@ export function getPrettyCategory(category: string) {
     }
 }
 
+export interface Achievement {
+    id: string;
+    iconUrl: string;
+    title: string;
+}
+
 export interface reviewBook {
     id: string;
     title: string;
@@ -63,6 +69,38 @@ export interface newBook {
     pages: number;
     imgSrc?: string;
     imgSrcSmall?: string;
+}
+
+export async function addAchievement(slot: number, achiement: Achievement) {
+    const user = ref<User | null>(auth.currentUser);
+    if (user.value) {
+        try {
+            switch (slot) {
+                case 1:
+                    await updateDoc(doc(db, "users", user.value.uid), {
+                        achievementSlot1: achiement,
+                        updated: serverTimestamp(),
+                    });
+                    break;
+
+                case 2:
+                    await updateDoc(doc(db, "users", user.value.uid), {
+                        achievementSlot2: achiement,
+                        updated: serverTimestamp(),
+                    });
+                    break;
+
+                case 3:
+                    await updateDoc(doc(db, "users", user.value.uid), {
+                        achievementSlot3: achiement,
+                        updated: serverTimestamp(),
+                    });
+                    break;
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }
 
 export async function removeReview(book: reviewBook) {
@@ -124,27 +162,35 @@ export async function addReview(data: reviewBook) {
 export async function removeFavBook() {
     const user = ref<User | null>(auth.currentUser);
     if (user.value) {
-        await updateDoc(doc(db, "users", user.value.uid), {
-            favBook: null,
-            updated: serverTimestamp(),
-        });
+        try {
+            await updateDoc(doc(db, "users", user.value.uid), {
+                favBook: null,
+                updated: serverTimestamp(),
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 
 export async function addFavBook(book: favBook) {
     const user = ref<User | null>(auth.currentUser);
     if (user.value) {
-        await updateDoc(doc(db, "users", user.value.uid), {
-            favBook: {
-                title: book.title,
-                authors: book.authors,
-                categories: book.categories,
-                pages: book.pages,
-                imgSrc: book.imgSrc,
-                imgSrcSmall: book.imgSrcSmall,
-            },
-            updated: serverTimestamp(),
-        });
+        try {
+            await updateDoc(doc(db, "users", user.value.uid), {
+                favBook: {
+                    title: book.title,
+                    authors: book.authors,
+                    categories: book.categories,
+                    pages: book.pages,
+                    imgSrc: book.imgSrc,
+                    imgSrcSmall: book.imgSrcSmall,
+                },
+                updated: serverTimestamp(),
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 

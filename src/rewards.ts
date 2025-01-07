@@ -179,7 +179,7 @@ export async function levelUp(level: number) {
                     const docAchievSnap = await getDoc(docAchievRef);
                     if (!docAchievSnap.exists() && !docTitlesSnap.exists()) {
                         await setDoc(docTitlesRef, {
-                            title: "The Knowladgeble",
+                            title: "The Knowledgeable",
                             added: serverTimestamp(),
                         });
                         await setDoc(docAchievRef, {

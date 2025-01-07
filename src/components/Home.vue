@@ -3,7 +3,7 @@ import { onMounted, ref, watch } from "vue";
 import Add from "./logos/Add.vue";
 import { auth, db } from "@/firebase";
 import type { User } from "firebase/auth";
-import { removeFavBook, type book } from "@/sharing";
+import { removeFavBook, type Achievement, type book } from "@/sharing";
 import {
     collection,
     doc,
@@ -16,11 +16,13 @@ import {
 import BookDetailsModal from "./modals/BookDetailsModal.vue";
 import { Modal } from "bootstrap";
 import Minus from "./logos/Minus.vue";
-import Edit from "./logos/Edit.vue";
 import AchievementsListModal from "./modals/AchievementsListModal.vue";
 
 // for details
 let chosenBook: book;
+// for achievements
+let achievementPos: number;
+let currentAchievementId: string;
 
 const user = ref<User | null>();
 const UserRef = ref();
@@ -28,13 +30,16 @@ const ReadListLast5 = ref();
 const ToReadListLast5 = ref();
 const ReadingListLast5 = ref();
 const ReviewList = ref();
-const AchievementsList = ref();
+const achievSlot1 = ref<Achievement | undefined>();
+const achievSlot2 = ref<Achievement | undefined>();
+const achievSlot3 = ref<Achievement | undefined>();
 let unsubscribeUser: Unsubscribe;
 let unsubscribeRead: Unsubscribe;
 let unsubscribeToRead: Unsubscribe;
 let unsubscribeReading: Unsubscribe;
 let unsubscribeReview: Unsubscribe;
 const booksDetailsOpen = ref<boolean>();
+const achievementsListOpen = ref<boolean>();
 let procentageLevel: number;
 let remainingToLevel: number;
 let level: number;
@@ -49,6 +54,20 @@ function closeModal() {
 function openModal() {
     setTimeout(() => {
         const modal = Modal.getOrCreateInstance("#bookDetailsModal");
+        modal.toggle();
+        modal.show();
+    }, 1);
+}
+
+function closeAchievModal() {
+    const modal = Modal.getOrCreateInstance("#achievementListModal");
+    modal.hide();
+    achievementsListOpen.value = false;
+}
+
+function openAchievModal() {
+    setTimeout(() => {
+        const modal = Modal.getOrCreateInstance("#achievementListModal");
         modal.toggle();
         modal.show();
     }, 1);
@@ -79,6 +98,13 @@ function getBookDetails(
     openModal();
 }
 
+function getAchievementPos(pos: number, achievId: string) {
+    achievementPos = pos;
+    currentAchievementId = achievId;
+    achievementsListOpen.value = true;
+    openAchievModal();
+}
+
 onMounted(async () => {
     try {
         await auth.authStateReady();
@@ -89,8 +115,9 @@ onMounted(async () => {
                 doc(db, "users", user.value?.uid!),
                 (querySnapshot) => {
                     UserRef.value = querySnapshot;
-                    AchievementsList.value =
-                        UserRef.value.data().DisplayedAchiev;
+                    achievSlot1.value = UserRef.value.data().achievementSlot1;
+                    achievSlot2.value = UserRef.value.data().achievementSlot2;
+                    achievSlot3.value = UserRef.value.data().achievementSlot3;
                 }
             );
 
@@ -157,7 +184,12 @@ watch(UserRef, () => {
         :book="chosenBook"
         @hide-modal="closeModal()"
     />
-    <AchievementsListModal />
+    <AchievementsListModal
+        v-if="achievementsListOpen"
+        :achievementPos="achievementPos"
+        :currentAchievId="currentAchievementId"
+        @hide-modal="closeAchievModal()"
+    />
     <div class="row g-5" style="max-width: 56.25rem">
         <!-- Second Section -->
         <div class="col-6">
@@ -165,17 +197,8 @@ watch(UserRef, () => {
                 <div class="card-title">
                     <div class="mx-5 d-flex justify-content-between my-3">
                         <span class="fs-3">Stats</span>
-                        <div>
-                            <a
-                                href="#"
-                                class="link-dark"
-                                data-bs-toggle="modal"
-                                data-bs-target="#achievementListModal"
-                                ><Edit
-                            /></a>
-                        </div>
                     </div>
-                    <hr class="mx-5" />
+                    <hr class="mx-5 mb-0" />
                 </div>
                 <div
                     class="card-body"
@@ -223,37 +246,143 @@ watch(UserRef, () => {
                         <div class="col-12">
                             <hr class="mt-0 mx-4" />
                             <!-- achievements -->
-                            <div
-                                class="d-flex justify-content-evenly"
-                                v-if="AchievementsList"
-                            >
-                                <div
-                                    class="d-flex flex-column"
-                                    v-for="achievement in AchievementsList"
+                            <div class="d-flex justify-content-evenly">
+                                <button
+                                    :class="
+                                        achievSlot1
+                                            ? 'btn d-flex justify-content-evenly align-items-center'
+                                            : 'btn btn-outline-light d-flex justify-content-evenly align-items-center'
+                                    "
+                                    style="height: 105px; width: 90px"
+                                    title="Add an Achievement"
+                                    @click="
+                                        () => {
+                                            if (achievSlot1) {
+                                                getAchievementPos(
+                                                    1,
+                                                    achievSlot1.id
+                                                );
+                                            } else {
+                                                getAchievementPos(1, '0');
+                                            }
+                                        }
+                                    "
                                 >
-                                    <img
-                                        :src="achievement?.IconUrl"
-                                        class="border shadow align-self-center"
-                                        style="
-                                            width: 50px;
-                                            height: 50px;
-                                            background-color: #737163;
-                                        "
-                                        alt="Achievements Cover"
-                                    />
-                                    <span
-                                        style="max-width: 90px"
-                                        class="fs-6 mt-1 fst-italic text-center"
-                                        >{{ achievement.title }}</span
+                                    <div
+                                        v-if="achievSlot1"
+                                        class="d-flex flex-column"
                                     >
-                                </div>
+                                        <img
+                                            :src="achievSlot1.iconUrl"
+                                            class="border shadow align-self-center"
+                                            style="
+                                                width: 50px;
+                                                height: 50px;
+                                                background-color: #737163;
+                                            "
+                                            alt="Achievements Cover"
+                                        />
+                                        <span
+                                            style="max-width: 90px"
+                                            class="fs-6 mt-1 fst-italic text-center"
+                                            >{{ achievSlot1.title }}</span
+                                        >
+                                    </div>
+                                    <Add v-else></Add>
+                                </button>
+                                <button
+                                    :class="
+                                        achievSlot2
+                                            ? 'btn d-flex justify-content-evenly align-items-center'
+                                            : 'btn btn-outline-light d-flex justify-content-evenly align-items-center'
+                                    "
+                                    style="height: 105px; width: 90px"
+                                    title="Add an Achievement"
+                                    @click="
+                                        () => {
+                                            if (achievSlot2) {
+                                                getAchievementPos(
+                                                    2,
+                                                    achievSlot2.id
+                                                );
+                                            } else {
+                                                getAchievementPos(2, '0');
+                                            }
+                                        }
+                                    "
+                                >
+                                    <div
+                                        v-if="achievSlot2"
+                                        class="d-flex flex-column"
+                                    >
+                                        <img
+                                            :src="achievSlot2.iconUrl"
+                                            class="border shadow align-self-center"
+                                            style="
+                                                width: 50px;
+                                                height: 50px;
+                                                background-color: #737163;
+                                            "
+                                            alt="Achievements Cover"
+                                        />
+                                        <span
+                                            style="max-width: 90px"
+                                            class="fs-6 mt-1 fst-italic text-center"
+                                            >{{ achievSlot2.title }}</span
+                                        >
+                                    </div>
+                                    <Add v-else></Add>
+                                </button>
+                                <button
+                                    :class="
+                                        achievSlot3
+                                            ? 'btn d-flex justify-content-evenly align-items-center'
+                                            : 'btn btn-outline-light d-flex justify-content-evenly align-items-center'
+                                    "
+                                    style="height: 105px; width: 90px"
+                                    title="Add an Achievement"
+                                    @click="
+                                        () => {
+                                            if (achievSlot3) {
+                                                getAchievementPos(
+                                                    3,
+                                                    achievSlot3.id
+                                                );
+                                            } else {
+                                                getAchievementPos(3, '0');
+                                            }
+                                        }
+                                    "
+                                >
+                                    <div
+                                        v-if="achievSlot3"
+                                        class="d-flex flex-column"
+                                    >
+                                        <img
+                                            :src="achievSlot3.iconUrl"
+                                            class="border shadow align-self-center"
+                                            style="
+                                                width: 50px;
+                                                height: 50px;
+                                                background-color: #737163;
+                                            "
+                                            alt="Achievements Cover"
+                                        />
+                                        <span
+                                            style="max-width: 90px"
+                                            class="fs-6 mt-1 fst-italic text-center"
+                                            >{{ achievSlot3.title }}</span
+                                        >
+                                    </div>
+                                    <Add v-else></Add>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
+        <!-- Favourite book -->
         <div class="col-6">
             <div id="cards" class="card rounded-4">
                 <div class="card-title">
