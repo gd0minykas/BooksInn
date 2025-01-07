@@ -141,9 +141,6 @@ async function saveChanges() {
 }
 
 /* TODO:
- * Responsive design
- * Confirm password on account deletion
- * MAIN PART DONE
  *
  */
 </script>
