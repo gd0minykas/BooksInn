@@ -121,20 +121,6 @@ onMounted(async () => {
                             <li class="nav-item" role="presentation">
                                 <button
                                     class="nav-link link-dark"
-                                    id="to-read-tab"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#to-read-tab-pane"
-                                    type="button"
-                                    role="tab"
-                                    aria-controls="to-read-tab-pane"
-                                    aria-selected="false"
-                                >
-                                    To Read
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button
-                                    class="nav-link link-dark"
                                     id="reading-tab"
                                     data-bs-toggle="tab"
                                     data-bs-target="#reading-tab-pane"
@@ -144,6 +130,20 @@ onMounted(async () => {
                                     aria-selected="false"
                                 >
                                     Reading
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button
+                                    class="nav-link link-dark"
+                                    id="to-read-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#to-read-tab-pane"
+                                    type="button"
+                                    role="tab"
+                                    aria-controls="to-read-tab-pane"
+                                    aria-selected="false"
+                                >
+                                    To Read
                                 </button>
                             </li>
                         </ul>
@@ -171,17 +171,17 @@ onMounted(async () => {
                     tabindex="0"
                 >
                     <div class="card-body pt-0" id="favBookCard">
-                        <div class="row g-4 mx-3 mb-3">
-                            <div class="col-12 text-center my-3">
+                        <div class="row mx-md-3 mb-3">
+                            <div class="col-12 text-center mb-3">
                                 <span class="fs-4">Read</span>
                             </div>
                             <div
-                                class="col-2"
+                                class="col-4 col-md-2 mb-3"
                                 v-for="doc in ReadList"
                                 v-if="ReadList"
                             >
                                 <button
-                                    class="my-2 d-flex btn btn-light shadow text-start"
+                                    class="d-flex btn btn-light shadow text-start w-100 h-100"
                                     @click="
                                         () => {
                                             getBookDetails(
@@ -206,75 +206,12 @@ onMounted(async () => {
                                             height: 160px;
                                             background-color: #737163;
                                         "
-                                        class="border border-dark"
+                                        class="border border-dark w-100 h-100"
                                         alt="Book Cover"
                                     />
                                     <div
                                         v-else
-                                        class="border border-dark d-flex"
-                                        style="
-                                            width: 100px;
-                                            height: 160px;
-                                            background-color: #737163;
-                                        "
-                                    >
-                                        <span
-                                            class="text-center mt-3 text-white lead"
-                                            >Missing Book Cover</span
-                                        >
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="tab-pane fade"
-                    id="to-read-tab-pane"
-                    role="tabpanel"
-                    aria-labelledby="to-read-tab"
-                    tabindex="0"
-                >
-                    <div class="card-body pt-0" id="favBookCard">
-                        <div class="row g-4 mx-3 mb-3">
-                            <div class="col-12 text-center my-3">
-                                <span class="fs-4">To Read</span>
-                            </div>
-                            <div
-                                class="col-2"
-                                v-for="doc in ToReadList"
-                                v-if="ToReadList"
-                            >
-                                <button
-                                    class="my-2 d-flex btn btn-light shadow text-start"
-                                    @click="
-                                        getBookDetails(
-                                            doc.id,
-                                            doc.data().title,
-                                            doc.data().authors,
-                                            doc.data().categories,
-                                            doc.data().pages,
-                                            doc.data().currentCategory,
-                                            doc.data().imgSrc,
-                                            doc.data().imgSrcSmall
-                                        )
-                                    "
-                                    :disabled="booksDetailsOpen"
-                                >
-                                    <img
-                                        v-if="doc.data().imgSrc"
-                                        :src="doc.data().imgSrc"
-                                        style="
-                                            width: 100px;
-                                            height: 160px;
-                                            background-color: #737163;
-                                        "
-                                        class="border border-dark"
-                                        alt="Book Cover"
-                                    />
-                                    <div
-                                        v-else
-                                        class="border border-dark d-flex"
+                                        class="border border-dark d-flex w-100 h-100"
                                         style="
                                             width: 100px;
                                             height: 160px;
@@ -299,17 +236,17 @@ onMounted(async () => {
                     tabindex="0"
                 >
                     <div class="card-body pt-0" id="favBookCard">
-                        <div class="row g-4 mx-3 mb-3">
-                            <div class="col-12 text-center my-3">
+                        <div class="row mx-md-3 mb-3">
+                            <div class="col-12 text-center mb-3">
                                 <span class="fs-4">Reading</span>
                             </div>
                             <div
-                                class="col-2"
+                                class="col-4 col-md-2 mb-3"
                                 v-for="doc in ReadingList"
                                 v-if="ReadingList"
                             >
                                 <button
-                                    class="my-2 d-flex btn btn-light shadow text-start"
+                                    class="d-flex btn btn-light shadow text-start w-100 h-100"
                                     @click="
                                         getBookDetails(
                                             doc.id,
@@ -332,12 +269,75 @@ onMounted(async () => {
                                             height: 160px;
                                             background-color: #737163;
                                         "
-                                        class="border border-dark"
+                                        class="border border-dark w-100 h-100"
                                         alt="Book Cover"
                                     />
                                     <div
                                         v-else
-                                        class="border border-dark d-flex"
+                                        class="border border-dark d-flex w-100 h-100"
+                                        style="
+                                            width: 100px;
+                                            height: 160px;
+                                            background-color: #737163;
+                                        "
+                                    >
+                                        <span
+                                            class="text-center mt-3 text-white lead"
+                                            >Missing Book Cover</span
+                                        >
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="tab-pane fade"
+                    id="to-read-tab-pane"
+                    role="tabpanel"
+                    aria-labelledby="to-read-tab"
+                    tabindex="0"
+                >
+                    <div class="card-body pt-0" id="favBookCard">
+                        <div class="row mx-md-3 mb-3">
+                            <div class="col-12 text-center mb-3">
+                                <span class="fs-4">To Read</span>
+                            </div>
+                            <div
+                                class="col-4 col-md-2 mb-3"
+                                v-for="doc in ToReadList"
+                                v-if="ToReadList"
+                            >
+                                <button
+                                    class="d-flex btn btn-light shadow text-start w-100 h-100"
+                                    @click="
+                                        getBookDetails(
+                                            doc.id,
+                                            doc.data().title,
+                                            doc.data().authors,
+                                            doc.data().categories,
+                                            doc.data().pages,
+                                            doc.data().currentCategory,
+                                            doc.data().imgSrc,
+                                            doc.data().imgSrcSmall
+                                        )
+                                    "
+                                    :disabled="booksDetailsOpen"
+                                >
+                                    <img
+                                        v-if="doc.data().imgSrc"
+                                        :src="doc.data().imgSrc"
+                                        style="
+                                            width: 100px;
+                                            height: 160px;
+                                            background-color: #737163;
+                                        "
+                                        class="border border-dark w-100 h-100"
+                                        alt="Book Cover"
+                                    />
+                                    <div
+                                        v-else
+                                        class="border border-dark d-flex w-100 h-100"
                                         style="
                                             width: 100px;
                                             height: 160px;

@@ -125,7 +125,7 @@ onMounted(async () => {
                 query(
                     collection(db, `users/${user.value?.uid}/read`),
                     orderBy("added", "desc"),
-                    limit(6)
+                    limit(5)
                 ),
                 (querySnapshot) => {
                     ReadListLast5.value = querySnapshot.docs;
@@ -136,7 +136,7 @@ onMounted(async () => {
                 query(
                     collection(db, `users/${user.value?.uid}/to-read`),
                     orderBy("added", "desc"),
-                    limit(6)
+                    limit(5)
                 ),
                 (querySnapshot) => {
                     ToReadListLast5.value = querySnapshot.docs;
@@ -147,7 +147,7 @@ onMounted(async () => {
                 query(
                     collection(db, `users/${user.value?.uid}/reading`),
                     orderBy("added", "desc"),
-                    limit(6)
+                    limit(5)
                 ),
                 (querySnapshot) => {
                     ReadingListLast5.value = querySnapshot.docs;
@@ -192,7 +192,7 @@ watch(UserRef, () => {
     />
     <div class="row g-5" style="max-width: 56.25rem">
         <!-- Second Section -->
-        <div class="col-6">
+        <div class="col-12 col-md-6">
             <div id="cards" class="card rounded-4">
                 <div class="card-title">
                     <div class="mx-5 d-flex justify-content-between my-3">
@@ -383,7 +383,7 @@ watch(UserRef, () => {
             </div>
         </div>
         <!-- Favourite book -->
-        <div class="col-6">
+        <div class="col-12 col-md-6">
             <div id="cards" class="card rounded-4">
                 <div class="card-title">
                     <div class="mx-5 d-flex justify-content-between my-3">
@@ -415,7 +415,7 @@ watch(UserRef, () => {
                     style="min-height: 15rem"
                 >
                     <div
-                        class="row mx-3"
+                        class="row mx-md-3"
                         v-if="UserRef?.data()?.favBook != null"
                     >
                         <div class="col-4">
@@ -504,14 +504,16 @@ watch(UserRef, () => {
                                 >Read Books</span
                             >
                         </div>
-                        <div class="row">
+                        <div
+                            class="row gap-md-2 justify-content-center justify-content-md-start ms-1 ps-1"
+                        >
                             <div
-                                class="col-2"
+                                class="col-4 col-md-2 mb-3"
                                 v-for="doc in ReadListLast5"
                                 v-if="ReadListLast5"
                             >
                                 <button
-                                    class="my-2 d-flex btn btn-light shadow text-start"
+                                    class="my-2 d-flex btn btn-light shadow text-start w-100 h-100"
                                     @click="
                                         getBookDetails(
                                             doc.id,
@@ -534,12 +536,12 @@ watch(UserRef, () => {
                                             height: 160px;
                                             background-color: #737163;
                                         "
-                                        class="border border-dark"
+                                        class="border border-dark w-100 h-100"
                                         alt="Book Cover"
                                     />
                                     <div
                                         v-else
-                                        class="border border-dark d-flex"
+                                        class="border border-dark d-flex w-100 h-100"
                                         style="
                                             width: 100px;
                                             height: 160px;
@@ -562,14 +564,16 @@ watch(UserRef, () => {
                                 >Reading Books</span
                             >
                         </div>
-                        <div class="row">
+                        <div
+                            class="row gap-md-2 justify-content-center justify-content-md-start ms-1 ps-1"
+                        >
                             <div
-                                class="col-2"
+                                class="col-4 col-md-2 mb-3"
                                 v-for="doc in ReadingListLast5"
                                 v-if="ReadingListLast5"
                             >
                                 <button
-                                    class="my-2 d-flex btn btn-light shadow text-start"
+                                    class="my-2 d-flex btn btn-light shadow text-start w-100 h-100"
                                     @click="
                                         getBookDetails(
                                             doc.id,
@@ -592,12 +596,12 @@ watch(UserRef, () => {
                                             height: 160px;
                                             background-color: #737163;
                                         "
-                                        class="border border-dark"
+                                        class="border border-dark w-100 h-100"
                                         alt="Book Cover"
                                     />
                                     <div
                                         v-else
-                                        class="border border-dark d-flex"
+                                        class="border border-dark d-flex w-100 h-100"
                                         style="
                                             width: 100px;
                                             height: 160px;
@@ -620,14 +624,16 @@ watch(UserRef, () => {
                                 >Books To Read</span
                             >
                         </div>
-                        <div class="row">
+                        <div
+                            class="row gap-md-2 justify-content-center justify-content-md-start ms-1 ps-1"
+                        >
                             <div
-                                class="col-2"
+                                class="col-4 col-md-2 mb-3"
                                 v-for="doc in ToReadListLast5"
                                 v-if="ToReadListLast5"
                             >
                                 <button
-                                    class="my-2 d-flex btn btn-light shadow text-start"
+                                    class="my-2 d-flex btn btn-light shadow text-start w-100 h-100"
                                     @click="
                                         getBookDetails(
                                             doc.id,
@@ -650,12 +656,12 @@ watch(UserRef, () => {
                                             height: 160px;
                                             background-color: #737163;
                                         "
-                                        class="border border-dark"
+                                        class="border border-dark w-100 h-100"
                                         alt="Book Cover"
                                     />
                                     <div
                                         v-else
-                                        class="border border-dark d-flex"
+                                        class="border border-dark d-flex w-100 h-100"
                                         style="
                                             width: 100px;
                                             height: 160px;
@@ -693,7 +699,7 @@ watch(UserRef, () => {
                     </div>
                     <hr class="mx-5" />
                 </div>
-                <div class="card-body me-3" id="reviewsCard">
+                <div class="card-body" id="reviewsCard">
                     <div class="row">
                         <div v-for="items in ReviewList" v-if="ReviewList">
                             <div class="row">
@@ -705,14 +711,18 @@ watch(UserRef, () => {
                                             v-if="items.data().imgSrc"
                                             :src="items.data().imgSrc"
                                             class="border border-dark"
+                                            style="
+                                                min-width: 100px;
+                                                min-height: 160px;
+                                            "
                                             alt="Book Cover"
                                         />
                                         <div
                                             v-else
                                             class="border border-dark d-flex"
                                             style="
-                                                width: 130px;
-                                                height: 200px;
+                                                min-width: 100px;
+                                                min-height: 160px;
                                                 background-color: #737163;
                                             "
                                         >
@@ -724,7 +734,7 @@ watch(UserRef, () => {
                                     </div>
                                 </div>
                                 <div class="col-8">
-                                    <div class="d-flex flex-column">
+                                    <div class="d-flex flex-column mt-2">
                                         <div>
                                             <span class="fs-5"
                                                 >"{{
@@ -734,7 +744,7 @@ watch(UserRef, () => {
                                         </div>
                                         <hr class="mt-0" />
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-7 col-md-6">
                                                 <p class="mb-0">Authors:</p>
                                                 <div
                                                     v-for="author in items.data()
@@ -746,9 +756,9 @@ watch(UserRef, () => {
                                                 </div>
                                             </div>
                                             <div
-                                                class="col-6 d-flex justify-content-end"
+                                                class="col-5 col-md-6 d-flex justify-content-end"
                                             >
-                                                <div class="me-3 lead">
+                                                <div class="me-md-3 fs-6 lead">
                                                     <span>Rating: </span>
                                                     <span
                                                         >{{

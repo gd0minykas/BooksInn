@@ -141,7 +141,6 @@ async function saveChanges() {
 }
 
 /* TODO:
- * Adding achievements. Three positions. Can add to each. Check if they are taken.
  * Responsive design
  * Confirm password on account deletion
  * MAIN PART DONE
@@ -164,40 +163,44 @@ async function saveChanges() {
                 <div class="row g-5">
                     <!-- Fist Section -->
                     <div class="col-12" style="min-height: 180px">
-                        <div class="d-flex justify-content-evenly">
-                            <div class="d-flex justify-content-center">
+                        <div
+                            class="d-flex flex-column aling-items-center flex-md-row justify-content-evenly"
+                        >
+                            <div class="d-flex justify-content-center mt-md-2">
                                 <div id="avatarPlace">
                                     <div v-if="editingMode">
-                                        <div
-                                            class="d-flex justify-content-center"
-                                        >
-                                            <img
-                                                :src="avatarsList[index]"
-                                                class="rounded-circle border border-light"
-                                                style="
-                                                    width: 7.5rem;
-                                                    height: 7.5rem;
-                                                "
-                                                alt="Avatar"
-                                            />
-                                        </div>
-                                        <div
-                                            class="d-flex justify-content-center mt-2"
-                                        >
-                                            <button
-                                                type="button"
-                                                class="btn btn-warning btn-sm mx-1"
-                                                @click="() => index--"
+                                        <div class="mb-3 mb-md-0">
+                                            <div
+                                                class="d-flex justify-content-center"
                                             >
-                                                <LeftArrow />
-                                            </button>
-                                            <button
-                                                type="button"
-                                                class="btn btn-warning btn-sm mx-1"
-                                                @click="() => index++"
+                                                <img
+                                                    :src="avatarsList[index]"
+                                                    class="rounded-circle border border-light"
+                                                    style="
+                                                        width: 7.5rem;
+                                                        height: 7.5rem;
+                                                    "
+                                                    alt="Avatar"
+                                                />
+                                            </div>
+                                            <div
+                                                class="d-flex justify-content-center mt-2"
                                             >
-                                                <RightArrow />
-                                            </button>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-warning btn-sm mx-1"
+                                                    @click="() => index--"
+                                                >
+                                                    <LeftArrow />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-warning btn-sm mx-1"
+                                                    @click="() => index++"
+                                                >
+                                                    <RightArrow />
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                     <div v-else>
@@ -211,7 +214,9 @@ async function saveChanges() {
                                     </div>
                                 </div>
                             </div>
-                            <div class="align-self-end">
+                            <div
+                                class="justify-content-center align-self-md-end"
+                            >
                                 <div
                                     v-if="editingMode"
                                     class="mb-2 justify-content-center"
@@ -239,26 +244,38 @@ async function saveChanges() {
                                     </div>
                                 </div>
                                 <div v-else class="mb-2 justify-content-center">
-                                    <div>
-                                        <span
-                                            v-if="user?.displayName"
-                                            class="fs-2"
-                                            >{{ user?.displayName }}</span
+                                    <div
+                                        class="mt-2 d-flex flex-column justify-content-centre"
+                                    >
+                                        <div class="text-center">
+                                            <span
+                                                v-if="user?.displayName"
+                                                class="fs-2"
+                                                >{{ user?.displayName }}</span
+                                            >
+                                            <span v-else class="fs-2"
+                                                >Guest</span
+                                            >
+                                        </div>
+                                        <div
+                                            class="d-flex justify-content-center"
                                         >
-                                        <span v-else class="fs-2">Guest</span>
-                                    </div>
-                                    <div class="d-flex justify-content-center">
-                                        <span
-                                            v-if="displayedTitle"
-                                            class="fs-4"
-                                            >{{ displayedTitle }}</span
-                                        >
+                                            <span
+                                                v-if="displayedTitle"
+                                                class="fs-4"
+                                                >{{ displayedTitle }}</span
+                                            >
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex align-self-end">
-                                <div class="mt-5">
-                                    <div class="d-flex flex-column">
+                            <div
+                                class="d-flex align-self-md-end justify-content-center"
+                            >
+                                <div class="mt-md-5">
+                                    <div
+                                        class="d-flex flex-md-column gap-3 gap-md-0"
+                                    >
                                         <div>
                                             <div v-if="loadingForm">
                                                 <Spinner1 />
@@ -267,7 +284,7 @@ async function saveChanges() {
                                                 v-if="
                                                     editingMode && !loadingForm
                                                 "
-                                                class="btn btn-warning btn-sm mt-2"
+                                                class="btn btn-warning mt-2"
                                                 @click="saveChanges()"
                                             >
                                                 Save Changes

@@ -59,6 +59,7 @@ async function addReviewOfaBook() {
     } catch (error) {
         console.log(error);
     }
+    ratingNum.value = undefined;
 }
 </script>
 
@@ -89,7 +90,12 @@ async function addReviewOfaBook() {
                                 class="btn-close"
                                 data-bs-dismiss="modal"
                                 aria-label="Close"
-                                @click="bookReviewIsOpen = !bookReviewIsOpen"
+                                @click="
+                                    () => {
+                                        ratingNum = undefined;
+                                        bookReviewIsOpen = !bookReviewIsOpen;
+                                    }
+                                "
                             ></button>
                         </div>
                     </div>
@@ -102,6 +108,7 @@ async function addReviewOfaBook() {
                                     class="nav-link link-warning"
                                     @click="
                                         () => {
+                                            ratingNum = undefined;
                                             bookReviewIsOpen =
                                                 !bookReviewIsOpen;
                                         }
@@ -195,6 +202,7 @@ async function addReviewOfaBook() {
                                         class="btn btn-secondary"
                                         @click="
                                             () => {
+                                                ratingNum = undefined;
                                                 bookReviewIsOpen =
                                                     !bookReviewIsOpen;
                                             }

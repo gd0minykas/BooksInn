@@ -52,9 +52,13 @@ onMounted(async () => {
                 </div>
                 <hr class="mx-5" />
             </div>
-            <div class="card-body me-3" id="favBookCard">
+            <div class="card-body" id="reviewsCard">
                 <div class="row">
-                    <div v-for="items in ReviewList" v-if="ReviewList">
+                    <div
+                        v-for="items in ReviewList"
+                        v-if="ReviewList"
+                        class="mb-4"
+                    >
                         <div class="row mb-4">
                             <div class="col-4">
                                 <div class="d-flex justify-content-center">
@@ -62,14 +66,18 @@ onMounted(async () => {
                                         v-if="items.data().imgSrc"
                                         :src="items.data().imgSrc"
                                         class="border border-dark"
+                                        style="
+                                            min-width: 100px;
+                                            min-height: 160px;
+                                        "
                                         alt="Book Cover"
                                     />
                                     <div
                                         v-else
                                         class="border border-dark d-flex"
                                         style="
-                                            width: 130px;
-                                            height: 200px;
+                                            min-width: 100px;
+                                            min-height: 160px;
                                             background-color: #737163;
                                         "
                                     >
@@ -103,7 +111,7 @@ onMounted(async () => {
 
                                     <hr class="mt-0" />
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div class="col-7 col-md-6">
                                             <p class="mb-0">Authors:</p>
                                             <div
                                                 v-for="author in items.data()
@@ -115,9 +123,9 @@ onMounted(async () => {
                                             </div>
                                         </div>
                                         <div
-                                            class="col-6 d-flex justify-content-end"
+                                            class="col-5 col-md-6 d-flex justify-content-end"
                                         >
-                                            <div class="me-3 lead">
+                                            <div class="me-md-3 fs-6 lead">
                                                 <span>Rating: </span>
                                                 <span
                                                     >{{ items.data().rating }} /
